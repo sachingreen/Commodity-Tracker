@@ -174,7 +174,9 @@ export function DetailView({ instrument, series }: { instrument: Instrument; ser
         <div className="stat"><dt>{daily ? "52w high / low" : "12m high / low"}</dt>
           <dd>{window.length > 1 ? `${fmt(Math.max(...window))} / ${fmt(Math.min(...window))}` : "—"}</dd></div>
         <div className="stat"><dt>Dollar beta</dt>
-          <dd>{dxy ? `${dxy.beta.toFixed(2)} · r² ${dxy.rSquared.toFixed(2)}` : "—"}</dd></div>
+          <dd>{!dxy ? "—"
+            : dxy.rSquared < 0.15 ? <span className="flat" style={{ fontSize: 12 }}>no relationship</span>
+            : `${dxy.beta.toFixed(2)} · r² ${dxy.rSquared.toFixed(2)}`}</dd></div>
       </dl>
       {pos && (
         <div className="leak" style={{ margin: 0, borderTop: "1px solid var(--line)" }}>
