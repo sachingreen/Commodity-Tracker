@@ -48,6 +48,7 @@ jobs:
       - name: Refresh prices
         if: github.event_name != 'push'
         env:
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
           DATA_GOV_KEY: ${{ secrets.DATA_GOV_KEY }}
           ALPHAVANTAGE_KEY: ${{ secrets.ALPHAVANTAGE_KEY }}
           TIINGO_KEY: ${{ secrets.TIINGO_KEY }}

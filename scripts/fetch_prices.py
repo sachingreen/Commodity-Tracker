@@ -187,26 +187,41 @@ def get(url, tries=2, timeout=30):
 
 
 def fetch_fred(code, limit):
-    """FRED's chart CSV needs no key. Returns ([(date, value), ...], status)."""
-    body = get(f"https://fred.stlouisfed.org/graph/fredgraph.csv?id={code}", timeout=45)
+    """FRED's official API. Returns ([(date, value), ...], status).
+
+    Uses api.stlouisfed.org, not the fredgraph.csv chart-download URL. The
+    chart URL is meant for browsers and accepts connections from CI runners
+    then sends nothing back — a 45-second timeout with zero bytes received.
+    The API host is built for programmatic access and needs a free key.
+    """
+    key = env_key("FRED_API_KEY")
+    if not key:
+        return [], "no FRED_API_KEY set"
+    q = urllib.parse.urlencode({
+        "series_id": code, "api_key": key, "file_type": "json",
+        "sort_order": "desc", "limit": limit,
+    })
+    body = get("https://api.stlouisfed.org/fred/series/observations?" + q, timeout=30)
     if not body or body.startswith("__"):
         return [], (body or "no response")
-    lines = body.strip().splitlines()
-    if len(lines) < 2 or "," not in lines[0]:
-        return [], "not CSV — check the series ID"
+    try:
+        obs = json.loads(body).get("observations", [])
+    except Exception:
+        # the API reports a bad key or series as XML even with file_type=json
+        return [], f"unexpected response: {body[:60]}"
+    if not obs:
+        return [], "series returned no observations"
     out = []
-    for line in lines[1:]:
-        parts = line.split(",")
-        if len(parts) < 2:
-            continue
-        day, raw = parts[0].strip(), parts[1].strip()
+    for o in obs:
+        raw = str(o.get("value", "")).strip()
         if raw in (".", "", "NA"):        # FRED marks gaps with a full stop
             continue
         try:
-            out.append((day, round(float(raw), 4)))
-        except ValueError:
+            out.append((o["date"], round(float(raw), 4)))
+        except (ValueError, KeyError):
             continue
-    return out[-limit:], ("ok" if out else "series is empty")
+    out.sort()
+    return out, ("ok" if out else "every observation was a gap marker")
 
 
 def fetch_coingecko(coin, days):
