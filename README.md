@@ -59,6 +59,11 @@ node test/app.test.mjs           # 37 integration tests against the built app
 | Compare | Up to 8 instruments rebased to 100 on one axis |
 | Correlation | Pearson on daily log returns, over sessions both instruments traded |
 | Basket | Weighted custom index, plus volatility and per-leg variance contributions |
+
+The Macro group is there because commodities do not move in isolation — the
+dollar, real yields and risk appetite drive much of what the rest of the board
+shows, and all four series are daily, so they carry volatility bands and enter
+the correlation matrix.
 | Ledger | Landed-cost stack today vs a year ago, importer and exporter views |
 
 Watchlist, rules, basket and ledger assumptions persist per browser via
@@ -79,6 +84,10 @@ worth acting on.
   to hold them. Highlights are evaluated in your browser when the page loads;
   nothing reaches you with the tab closed. Multi-user features are the point at
   which Pages stops being enough.
+- **Staleness is judged per cadence, not per day.** A monthly IMF benchmark
+  published for 1 July is current in August; flagging it "55d old" would make
+  working data look broken. The thresholds are 4 days for daily series, 10 for
+  weekly, 45 for monthly.
 - **Rows with no price archive show no change columns, no correlations, and no
   year-on-year stack.** Nickel, zinc, BDI, WCI and the four mandi rows have no
   free history to backfill, so they start from one point and build up. The
@@ -97,11 +106,22 @@ worth acting on.
 | Group | Source | Frequency |
 |---|---|---|
 | Brent, WTI, natural gas, USD/INR | EIA and Fed via FRED | daily |
-| Bitcoin, Ethereum | CoinGecko | daily |
+| Bitcoin, Ethereum, Solana | Coinbase, CoinGecko as fallback | daily |
+| VIX, US 10-year, broad dollar index, EUR/USD | CBOE, Treasury and Fed via FRED | daily |
 | Metals, precious, global agri | IMF via FRED | monthly, 2–3 week lag |
-| India agri (chilli, turmeric, cotton, onion) | data.gov.in Agmarknet | daily, when up |
+| India agri — 14 mandi rows | data.gov.in Agmarknet | daily, when the market trades |
 | Commodity ETF proxies (GLD, SLV, CPER, WEAT, CORN, CANE, JO, SOYB, DBB, USO) | Alpha Vantage, Tiingo as fallback | daily |
 | BDI, Drewry WCI | `data/manual.json` | by hand |
+
+**About the mandi rows.** Several are chosen to sit opposite a global
+benchmark — wheat, soybeans, cotton and sugar appear twice on the board, once
+as an IMF world price and once as what is actually paid at an Indian mandi.
+The gap between the two is the basis.
+
+That dataset carries no archive: it publishes the current day only. These rows
+therefore start with a single point and accumulate one per run, so their charts
+and change columns stay empty for weeks. A row reporting "no arrivals today" is
+normal — Agmarknet lists only markets that actually traded.
 
 **About the proxies.** Free daily feeds for the actual metal and grain
 contracts do not exist without paying. What does exist is daily equity data,

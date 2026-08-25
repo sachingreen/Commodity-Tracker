@@ -2,7 +2,7 @@ import type { Series } from "../api/types";
 import { project, rebase } from "../lib/stats";
 import { fmt } from "../lib/format";
 
-export function Sparkline({ series }: { series?: Series }) {
+export function Sparkline({ series, up }: { series?: Series; up?: boolean }) {
   const c = series?.close ?? [];
   if (c.length < 2) return <span className="src">—</span>;
   const lo = Math.min(...c), hi = Math.max(...c), r = hi - lo || 1;
@@ -11,7 +11,9 @@ export function Sparkline({ series }: { series?: Series }) {
   return (
     <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} aria-hidden="true" style={{ display: "block" }}>
       <polyline points={pts} fill="none" strokeWidth="1.4" strokeLinejoin="round"
-        stroke={c[c.length - 1] >= c[0] ? "var(--gain)" : "var(--loss)"} />
+        // colour from the row's headline change when given, so a long-run gain
+      // never renders red beside a green percentage
+      stroke={(up ?? c[c.length - 1] >= c[0]) ? "var(--gain)" : "var(--loss)"} />
     </svg>
   );
 }

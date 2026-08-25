@@ -61,8 +61,17 @@ SOURCES = {
     "INR=X": ("fred", "DEXINUS", "USD/INR", "Freight", "INR", "daily", "Fed via FRED"),
 
     # --- CoinGecko, daily --------------------------------------------------
-    "BTC-USD": ("coingecko", "bitcoin", "Bitcoin", "Crypto", "USD", "daily", "CoinGecko"),
-    "ETH-USD": ("coingecko", "ethereum", "Ethereum", "Crypto", "USD", "daily", "CoinGecko"),
+    "BTC-USD": ("coinbase", "BTC-USD", "Bitcoin", "Crypto", "USD", "daily", "Coinbase"),
+    "ETH-USD": ("coinbase", "ETH-USD", "Ethereum", "Crypto", "USD", "daily", "Coinbase"),
+    "SOL-USD": ("coinbase", "SOL-USD", "Solana", "Crypto", "USD", "daily", "Coinbase"),
+
+    # --- FRED, daily macro. Commodities do not move in isolation: the
+    # dollar, real yields and risk appetite drive a lot of what the board
+    # above shows, and all four are daily and reliable from CI.
+    "VIX":   ("fred", "VIXCLS", "VIX", "Macro", "index", "daily", "CBOE via FRED"),
+    "US10Y": ("fred", "DGS10", "US 10-year yield", "Macro", "%", "daily", "Treasury via FRED"),
+    "DXY":   ("fred", "DTWEXBGS", "Broad dollar index", "Macro", "index", "daily", "Fed via FRED"),
+    "EURUSD": ("fred", "DEXUSEU", "EUR/USD", "Macro", "USD", "daily", "Fed via FRED"),
 
     # --- FRED, monthly (IMF global benchmark prices) -----------------------
     "COPPER":  ("fred", "PCOPPUSDM", "Copper", "Base metals", "USD/t", "monthly", "IMF via FRED"),
@@ -78,24 +87,25 @@ SOURCES = {
     "COFFEE":  ("fred", "PCOFFOTMUSDM", "Coffee", "Global agri", "USc/lb", "monthly", "IMF via FRED"),
     "COTTON":  ("fred", "PCOTTINDUSDM", "Cotton", "Global agri", "USc/lb", "monthly", "IMF via FRED"),
 
-    # --- Agmarknet, daily when it is up ------------------------------------
-    "AGM-CHILLI":   ("mandi", "Chilli Red|Guntur|Andhra Pradesh", "Chilli (Guntur)", "India agri", "INR/qtl", "daily", "Agmarknet"),
-    "AGM-TURMERIC": ("mandi", "Turmeric|Nizamabad|Telangana", "Turmeric (Nizamabad)", "India agri", "INR/qtl", "daily", "Agmarknet"),
-    "AGM-COTTON":   ("mandi", "Cotton|Adilabad|Telangana", "Cotton (Adilabad)", "India agri", "INR/qtl", "daily", "Agmarknet"),
-    "AGM-ONION":    ("mandi", "Onion|Kurnool|Andhra Pradesh", "Onion (Kurnool)", "India agri", "INR/qtl", "daily", "Agmarknet"),
-
-    # --- Alpha Vantage, daily ETF proxies (needs ALPHAVANTAGE_KEY) ---------
-    # Ten tickers x two runs a day = 20 calls, inside the free tier's 25.
-    "P-GOLD":   ("alpha", "GLD", "Gold (GLD)", "Proxies", "USD/share", "daily", "Alpha Vantage · proxy"),
-    "P-SILVER": ("alpha", "SLV", "Silver (SLV)", "Proxies", "USD/share", "daily", "Alpha Vantage · proxy"),
-    "P-COPPER": ("alpha", "CPER", "Copper (CPER)", "Proxies", "USD/share", "daily", "Alpha Vantage · proxy"),
-    "P-WHEAT":  ("alpha", "WEAT", "Wheat (WEAT)", "Proxies", "USD/share", "daily", "Alpha Vantage · proxy"),
-    "P-CORN":   ("alpha", "CORN", "Corn (CORN)", "Proxies", "USD/share", "daily", "Alpha Vantage · proxy"),
-    "P-SUGAR":  ("alpha", "CANE", "Sugar (CANE)", "Proxies", "USD/share", "daily", "Alpha Vantage · proxy"),
-    "P-COFFEE": ("alpha", "JO", "Coffee (JO)", "Proxies", "USD/share", "daily", "Alpha Vantage · proxy"),
-    "P-SOY":    ("alpha", "SOYB", "Soybeans (SOYB)", "Proxies", "USD/share", "daily", "Alpha Vantage · proxy"),
-    "P-METALS": ("alpha", "DBB", "Base metals (DBB)", "Proxies", "USD/share", "daily", "Alpha Vantage · proxy"),
-    "P-OIL":    ("alpha", "USO", "Crude (USO)", "Proxies", "USD/share", "daily", "Alpha Vantage · proxy"),
+    # --- Agmarknet, daily when it is up -----------------------------------
+    # Chosen so several rows sit opposite a global benchmark above — wheat,
+    # soybeans, cotton and sugar all appear twice on the board, once as an
+    # IMF world price and once as what is actually paid at an Indian mandi.
+    # The gap between them is the basis, and it is the interesting number.
+    "AGM-CHILLI":    ("mandi", "Chilli Red|Guntur|Andhra Pradesh", "Chilli (Guntur)", "India agri", "INR/qtl", "daily", "Agmarknet"),
+    "AGM-TURMERIC":  ("mandi", "Turmeric|Nizamabad|Telangana", "Turmeric (Nizamabad)", "India agri", "INR/qtl", "daily", "Agmarknet"),
+    "AGM-COTTON":    ("mandi", "Cotton|Adilabad|Telangana", "Cotton (Adilabad)", "India agri", "INR/qtl", "daily", "Agmarknet"),
+    "AGM-ONION":     ("mandi", "Onion|Kurnool|Andhra Pradesh", "Onion (Kurnool)", "India agri", "INR/qtl", "daily", "Agmarknet"),
+    "AGM-WHEAT":     ("mandi", "Wheat|Khanna|Punjab", "Wheat (Khanna)", "India agri", "INR/qtl", "daily", "Agmarknet"),
+    "AGM-PADDY":     ("mandi", "Paddy(Dhan)(Common)|Karimnagar|Telangana", "Paddy (Karimnagar)", "India agri", "INR/qtl", "daily", "Agmarknet"),
+    "AGM-SOYBEAN":   ("mandi", "Soyabean|Indore|Madhya Pradesh", "Soybean (Indore)", "India agri", "INR/qtl", "daily", "Agmarknet"),
+    "AGM-GROUNDNUT": ("mandi", "Groundnut|Rajkot|Gujarat", "Groundnut (Rajkot)", "India agri", "INR/qtl", "daily", "Agmarknet"),
+    "AGM-MUSTARD":   ("mandi", "Mustard|Bharatpur|Rajasthan", "Mustard (Bharatpur)", "India agri", "INR/qtl", "daily", "Agmarknet"),
+    "AGM-CUMIN":     ("mandi", "Cummin Seed(Jeera)|Unjha|Gujarat", "Cumin (Unjha)", "India agri", "INR/qtl", "daily", "Agmarknet"),
+    "AGM-CORIANDER": ("mandi", "Coriander(Leaves)|Kota|Rajasthan", "Coriander (Kota)", "India agri", "INR/qtl", "daily", "Agmarknet"),
+    "AGM-TUR":       ("mandi", "Arhar (Tur/Red Gram)(Whole)|Latur|Maharashtra", "Tur (Latur)", "India agri", "INR/qtl", "daily", "Agmarknet"),
+    "AGM-POTATO":    ("mandi", "Potato|Agra|Uttar Pradesh", "Potato (Agra)", "India agri", "INR/qtl", "daily", "Agmarknet"),
+    "AGM-TOMATO":    ("mandi", "Tomato|Kolar|Karnataka", "Tomato (Kolar)", "India agri", "INR/qtl", "daily", "Agmarknet"),
 
     # --- hand-maintained, no free feed exists ------------------------------
     "BDI": ("manual", "", "Baltic Dry Index", "Freight", "index", "daily", "Baltic Exch · manual"),
@@ -105,13 +115,21 @@ SOURCES = {
 # a price outside this range means the series changed units or is the wrong one
 SANE = {
     "BZ=F": (10, 300), "CL=F": (10, 300), "NG=F": (0.5, 40), "INR=X": (40, 200),
-    "BTC-USD": (1e3, 1e7), "ETH-USD": (50, 1e5),
+    "BTC-USD": (1e3, 1e7), "ETH-USD": (50, 1e5), "SOL-USD": (1, 1e5),
+    "VIX": (5, 200), "US10Y": (0.1, 25), "DXY": (60, 200), "EURUSD": (0.5, 2.5),
     "COPPER": (2e3, 3e4), "ALUM": (800, 8e3), "NICKEL": (5e3, 8e4),
     "ZINC": (800, 1e4), "IRONORE": (20, 500),
     "WHEAT": (80, 1e3), "CORN": (60, 800), "RICE": (150, 2e3),
     "SUGAR": (3, 80), "SOY": (200, 2e3), "COFFEE": (50, 800), "COTTON": (30, 400),
+    # mandi prices are INR per quintal; ranges are wide because a bad season
+    # moves these far more than an exchange-traded contract
     "AGM-CHILLI": (2e3, 1e5), "AGM-TURMERIC": (2e3, 1e5),
     "AGM-COTTON": (1e3, 5e4), "AGM-ONION": (200, 3e4),
+    "AGM-WHEAT": (1e3, 1e4), "AGM-PADDY": (800, 1e4),
+    "AGM-SOYBEAN": (2e3, 2e4), "AGM-GROUNDNUT": (2e3, 3e4),
+    "AGM-MUSTARD": (2e3, 2e4), "AGM-CUMIN": (5e3, 1.5e5),
+    "AGM-CORIANDER": (500, 5e4), "AGM-TUR": (2e3, 3e4),
+    "AGM-POTATO": (200, 2e4), "AGM-TOMATO": (100, 3e4),
     "BDI": (300, 12000), "WCI": (500, 2e4),
     # ETF share prices, not commodity prices
     "P-GOLD": (20, 2000), "P-SILVER": (5, 500), "P-COPPER": (5, 300),
@@ -219,6 +237,33 @@ def fetch_fred(code, limit):
             continue
     out.sort()
     return out, ("ok" if out else "every observation was a gap marker")
+
+
+def fetch_coinbase(product, backfill):
+    """Daily candles from Coinbase's public API. No key, and unlike
+    CoinGecko's free tier it still returns history rather than a bare spot
+    price. Capped at 300 candles per request."""
+    url = (f"https://api.exchange.coinbase.com/products/{product}/candles"
+           "?granularity=86400")
+    body = get(url, timeout=30)
+    if not body or body.startswith("__"):
+        return [], (body or "no response")
+    try:
+        rows = json.loads(body)
+    except Exception:
+        return [], "unexpected response shape"
+    if not isinstance(rows, list) or not rows:
+        return [], "no candles returned"
+    out = []
+    for r in rows:
+        # [ time, low, high, open, close, volume ]
+        try:
+            day = dt.datetime.utcfromtimestamp(r[0]).date().isoformat()
+            out.append((day, round(float(r[4]), 2)))
+        except (IndexError, TypeError, ValueError):
+            continue
+    out.sort()
+    return (out if backfill else out[-10:]), ("ok" if out else "no closes parsed")
 
 
 def fetch_coingecko(coin, days):
@@ -337,7 +382,9 @@ def fetch_mandi(spec, key):
     except Exception:
         return [], "unexpected response shape"
     if not recs:
-        return [], "no records for that market today"
+        # normal, not an error: Agmarknet lists only markets that traded, and
+        # a mandi is closed on holidays and between harvests
+        return [], "no arrivals reported today"
     r = recs[0]
     try:
         px = float(str(r.get("modal_price", "")).replace(",", ""))
@@ -374,9 +421,18 @@ def pull(sym, spec, backfill, key, manual):
         return [], f"alphavantage: {why}; tiingo: {alt_why}"
     if provider == "fred":
         return fetch_fred(code, 900 if backfill else 12)
-    if provider == "coingecko":
-        points, why = fetch_coingecko(code, 730 if backfill else 7)
-        return (points, why) if points else fetch_coingecko_spot(code)
+    if provider == "coinbase":
+        points, why = fetch_coinbase(code, backfill)
+        if points:
+            return points, why
+        # CoinGecko as the backstop: history endpoint if it answers,
+        # otherwise a single spot price so the row still appears
+        coin = {"BTC-USD": "bitcoin", "ETH-USD": "ethereum",
+                "SOL-USD": "solana"}.get(sym, "")
+        if coin:
+            alt, alt_why = fetch_coingecko(coin, 730 if backfill else 7)
+            return (alt, alt_why) if alt else fetch_coingecko_spot(coin)
+        return [], why
     if provider == "mandi":
         return fetch_mandi(code, key)
     e = manual.get(sym) or {}

@@ -6,8 +6,16 @@ import { CONV, exporterStack, importerStack, leaks, perTonne, total,
 import { fmt, heat, pct, tone, uid } from "../lib/format";
 import { Cone, History, Overlay, Sparkline } from "./Charts";
 
+/**
+ * A monthly IMF benchmark published for 1 July is perfectly current in
+ * August — flagging it as 55 days old makes working data look broken. Judge
+ * lateness against the cadence the source actually publishes at.
+ */
+const STALE_AFTER: Record<string, number> = { daily: 4, weekly: 10, monthly: 45 };
+const isStale = (i: Instrument) => i.stale_days > (STALE_AFTER[i.freq] ?? 4);
+
 const GROUPS: Group[] = ["Energy", "Crypto", "Base metals", "Precious",
-  "Global agri", "India agri", "Freight", "Proxies"];
+  "Global agri", "India agri", "Freight", "Proxies", "Macro"];
 
 /* ---------------------------------------------------------------- board */
 
@@ -90,7 +98,7 @@ export function BoardView({ board, series, selected, onSelect, watchlist, onTogg
                           <span className="src">
                             {i.source}
                             {i.freq !== "daily" && ` · ${i.freq}`}
-                            {i.stale_days > 2 && <span className="stale"> · {i.stale_days}d old</span>}
+                            {isStale(i) && <span className="stale"> · {i.stale_days}d old</span>}
                           </span>
                         </td>
                         <td className="num">{fmt(i.price)}</td>
@@ -99,7 +107,8 @@ export function BoardView({ board, series, selected, onSelect, watchlist, onTogg
                         <td className={`num hide-s ${tone(cells[2])}`}>{pct(cells[2])}</td>
                         <td className={`num ${tone(cells[3])}`}>{pct(cells[3])}</td>
                         <td className="hide-s">
-                          {i.history > 1 ? <Sparkline series={s} />
+                          {i.history > 1
+                            ? <Sparkline series={s} up={(cells[3] ?? cells[2] ?? 0) >= 0} />
                             : <span className="src">no archive</span>}
                         </td>
                       </tr>
