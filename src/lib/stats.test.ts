@@ -318,3 +318,69 @@ describe("basis", () => {
     expect(basis(2650, "d", 260, "d", 1, 0)).toBeNull();
   });
 });
+
+import { dollarBeta } from "./stats";
+
+describe("dollarBeta", () => {
+  // Dollar compounds 1%/day; long enough to clear the 40-shared floor.
+  const n = 60;
+  const dollar: Series = {
+    dates: days(n),
+    close: Array.from({ length: n }, (_, i) => 100 * Math.pow(1.01, i)),
+  };
+
+  it("recovers a known beta when the instrument is a fixed multiple of dollar moves", () => {
+    const m = n - 1;
+    const dRet = Array.from({ length: m }, (_, i) => 0.01 * Math.sin(i));
+    const dClose = [100];
+    for (const r of dRet) dClose.push(dClose[dClose.length - 1] * Math.exp(r));
+    const iClose = [100];
+    for (const r of dRet) iClose.push(iClose[iClose.length - 1] * Math.exp(2 * r));
+    const dollar: Series = { dates: days(n), close: dClose };
+    const instr: Series = { dates: days(n), close: iClose };
+    const r = dollarBeta("X", "USD", { X: instr, USD: dollar })!;
+    expect(r).not.toBeNull();
+    expect(r.beta).toBeCloseTo(2, 6);
+    expect(r.rSquared).toBeCloseTo(1, 6);
+  });
+
+  it("reports a negative beta when the instrument moves against the dollar", () => {
+    const m = n - 1;
+    const dRet = Array.from({ length: m }, (_, i) => 0.01 * Math.sin(i));
+    const dClose = [100];
+    for (const r of dRet) dClose.push(dClose[dClose.length - 1] * Math.exp(r));
+    const iClose = [100];
+    for (const r of dRet) iClose.push(iClose[iClose.length - 1] * Math.exp(-r));
+    const dollar: Series = { dates: days(n), close: dClose };
+    const instr: Series = { dates: days(n), close: iClose };
+    const r = dollarBeta("X", "USD", { X: instr, USD: dollar })!;
+    expect(r.beta).toBeCloseTo(-1, 6);
+    expect(r.rSquared).toBeCloseTo(1, 6);
+  });
+
+  it("counts the return observations it actually used", () => {
+    const instr: Series = {
+      dates: days(n),
+      close: dollar.close.map((v) => (v / 100) ** 2 * 100),
+    };
+    const r = dollarBeta("X", "USD", { X: instr, USD: dollar })!;
+    expect(r.sessions).toBe(n - 1); // 60 shared dates → 59 return pairs
+  });
+
+  it("returns null rather than estimate on too few shared dates", () => {
+    const short = 30;
+    const a: Series = { dates: days(short), close: ramp(short).close };
+    const b: Series = { dates: days(short), close: ramp(short, 200).close };
+    expect(dollarBeta("X", "USD", { X: a, USD: b })).toBeNull();
+  });
+
+  it("returns null when either symbol is absent", () => {
+    expect(dollarBeta("X", "USD", { USD: dollar })).toBeNull();
+    expect(dollarBeta("X", "USD", { X: dollar })).toBeNull();
+  });
+
+  it("returns null when the dollar series has no variance", () => {
+    const instr = ramp(n);
+    expect(dollarBeta("X", "USD", { X: instr, USD: flat(n) })).toBeNull();
+  });
+});

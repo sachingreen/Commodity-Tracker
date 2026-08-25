@@ -383,3 +383,60 @@ export function basis(
     indiaDate, worldDate,
   };
 }
+
+export interface DollarBeta {
+  beta: number;
+  rSquared: number;
+  sessions: number;
+}
+
+/**
+ * Beta of an instrument's daily log-returns against the dollar's, via OLS.
+ *
+ * Two honest limits. Beta is a description of the past, not a mechanism —
+ * commodities and the dollar often move together because both respond to the
+ * same rate expectations, so this is correlation with a slope attached, not
+ * causation. And r² matters more than beta: a large beta with an r² of 0.05
+ * means the dollar explains almost nothing and the number is noise.
+ *
+ * Daily series only. Monthly observations cannot estimate this.
+ */
+export function dollarBeta(
+  symbol: string, dollarSymbol: string, series: SeriesMap, sessions = 252,
+): DollarBeta | null {
+  const a = series[symbol], b = series[dollarSymbol];
+  if (!a || !b) return null;
+
+  const priceOn = (s: Series) => {
+    const m = new Map<string, number>();
+    const n = Math.min(s.dates.length, sessions + 1);
+    const closes = s.close.slice(-n);
+    s.dates.slice(-n).forEach((d, i) => {
+      const v = closes[i];
+      if (v > 0) m.set(d, v);
+    });
+    return m;
+  };
+  const ma = priceOn(a), mb = priceOn(b);
+  const shared = [...ma.keys()].filter((d) => mb.has(d)).sort();
+  if (shared.length < 40) return null;
+
+  const x: number[] = [], y: number[] = [];
+  for (let i = 1; i < shared.length; i++) {
+    x.push(Math.log(mb.get(shared[i])! / mb.get(shared[i - 1])!));   // dollar
+    y.push(Math.log(ma.get(shared[i])! / ma.get(shared[i - 1])!));   // instrument
+  }
+
+  const n = x.length;
+  const mx = x.reduce((p, c) => p + c, 0) / n;
+  const my = y.reduce((p, c) => p + c, 0) / n;
+  let sxy = 0, sxx = 0, syy = 0;
+  for (let i = 0; i < n; i++) {
+    const dx = x[i] - mx, dy = y[i] - my;
+    sxy += dx * dy; sxx += dx * dx; syy += dy * dy;
+  }
+  if (sxx === 0 || syy === 0) return null;
+
+  const beta = sxy / sxx;
+  return { beta, rSquared: (sxy * sxy) / (sxx * syy), sessions: n };
+}
