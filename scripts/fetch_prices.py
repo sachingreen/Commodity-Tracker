@@ -70,8 +70,6 @@ SOURCES = {
     "NICKEL":  ("fred", "PNICKUSDM", "Nickel", "Base metals", "USD/t", "monthly", "IMF via FRED"),
     "ZINC":    ("fred", "PZINCUSDM", "Zinc", "Base metals", "USD/t", "monthly", "IMF via FRED"),
     "IRONORE": ("fred", "PIORECRUSDM", "Iron ore", "Base metals", "USD/t", "monthly", "IMF via FRED"),
-    "GOLD":    ("fred", "PGOLDUSDM", "Gold", "Precious", "USD/oz", "monthly", "IMF via FRED"),
-    "SILVER":  ("fred", "PSILVERUSDM", "Silver", "Precious", "USD/oz", "monthly", "IMF via FRED"),
     "WHEAT":   ("fred", "PWHEAMTUSDM", "Wheat", "Global agri", "USD/t", "monthly", "IMF via FRED"),
     "CORN":    ("fred", "PMAIZMTUSDM", "Maize", "Global agri", "USD/t", "monthly", "IMF via FRED"),
     "RICE":    ("fred", "PRICENPQUSDM", "Rice", "Global agri", "USD/t", "monthly", "IMF via FRED"),
@@ -110,7 +108,6 @@ SANE = {
     "BTC-USD": (1e3, 1e7), "ETH-USD": (50, 1e5),
     "COPPER": (2e3, 3e4), "ALUM": (800, 8e3), "NICKEL": (5e3, 8e4),
     "ZINC": (800, 1e4), "IRONORE": (20, 500),
-    "GOLD": (500, 2e4), "SILVER": (5, 300),
     "WHEAT": (80, 1e3), "CORN": (60, 800), "RICE": (150, 2e3),
     "SUGAR": (3, 80), "SOY": (200, 2e3), "COFFEE": (50, 800), "COTTON": (30, 400),
     "AGM-CHILLI": (2e3, 1e5), "AGM-TURMERIC": (2e3, 1e5),
@@ -239,6 +236,19 @@ def fetch_coingecko(coin, days):
     return out, ("ok" if out else "no prices returned")
 
 
+def fetch_coingecko_spot(coin):
+    """One current price, for when the history endpoint demands a key."""
+    body = get("https://api.coingecko.com/api/v3/simple/price"
+               f"?ids={coin}&vs_currencies=usd")
+    if not body or body.startswith("__"):
+        return [], (body or "no response")
+    try:
+        px = json.loads(body)[coin]["usd"]
+    except Exception:
+        return [], "unexpected response shape"
+    return [(dt.date.today().isoformat(), round(float(px), 2))], "ok · spot only"
+
+
 def fetch_alpha(ticker, key, backfill):
     """Daily closes for an exchange-traded proxy.
 
@@ -254,9 +264,11 @@ def fetch_alpha(ticker, key, backfill):
         return [], "no ALPHAVANTAGE_KEY set"
     if not key.isalnum():
         return [], "ALPHAVANTAGE_KEY has stray characters — re-paste the secret"
-    size = "full" if backfill else "compact"
+    # outputsize=full is a premium parameter on the free tier — it answers
+    # HTTP 200 with a polite refusal. compact returns 100 sessions, which is
+    # enough to seed a history that then grows one day at a time.
     url = ("https://www.alphavantage.co/query?function=TIME_SERIES_DAILY"
-           f"&symbol={ticker}&outputsize={size}&apikey={key}")
+           f"&symbol={ticker}&outputsize=compact&apikey={key}")
     body = get(url, timeout=45)
     if not body or body.startswith("__"):
         return [], (body or "no response")
@@ -272,7 +284,7 @@ def fetch_alpha(ticker, key, backfill):
     if not daily:
         return [], "no daily series in response"
     out = sorted((day, round(float(v["4. close"]), 4)) for day, v in daily.items())
-    return (out[-750:] if backfill else out[-10:]), "ok"
+    return (out if backfill else out[-10:]), "ok"
 
 
 def fetch_tiingo(ticker, backfill):
@@ -363,7 +375,8 @@ def pull(sym, spec, backfill, key, manual):
     if provider == "fred":
         return fetch_fred(code, 900 if backfill else 12)
     if provider == "coingecko":
-        return fetch_coingecko(code, 730 if backfill else 7)
+        points, why = fetch_coingecko(code, 730 if backfill else 7)
+        return (points, why) if points else fetch_coingecko_spot(code)
     if provider == "mandi":
         return fetch_mandi(code, key)
     e = manual.get(sym) or {}
@@ -424,7 +437,12 @@ def main():
         else:
             points, why = pull(sym, spec, backfill, key, manual)
         clean = [(d, p) for d, p in points if sane(sym, p)]
-        rejected += len(points) - len(clean)
+        if len(points) != len(clean):
+            bad = [p for _, p in points if not sane(sym, p)]
+            rejected += len(bad)
+            lo, hi = SANE.get(sym, (0, 0))
+            print(f"  {sym:14} {len(bad)} points outside {lo:g}–{hi:g} "
+                  f"(seen {min(bad):g}–{max(bad):g}) — widen SANE if these are real")
 
         # replace this symbol's history only now that replacement data exists
         if backfill and clean:
