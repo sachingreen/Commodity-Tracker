@@ -3,33 +3,12 @@
  "asof": "2026-08-25",
  "instruments": [
   {
-   "symbol": "LME-NI",
-   "name": "Nickel",
-   "group": "Base metals",
-   "unit": "USD/t",
-   "source": "LME \u00b7 manual",
-   "price": 16707,
-   "date": "2026-08-21",
-   "stale_days": 4,
-   "history": 1
-  },
-  {
-   "symbol": "LME-ZN",
-   "name": "Zinc",
-   "group": "Base metals",
-   "unit": "USD/t",
-   "source": "LME \u00b7 manual",
-   "price": 3824,
-   "date": "2026-08-21",
-   "stale_days": 4,
-   "history": 1
-  },
-  {
    "symbol": "BDI",
    "name": "Baltic Dry Index",
    "group": "Freight",
    "unit": "index",
    "source": "Baltic Exch \u00b7 manual",
+   "freq": "daily",
    "price": 2841,
    "date": "2026-08-21",
    "stale_days": 4,
@@ -41,6 +20,7 @@
    "group": "Freight",
    "unit": "USD/FEU",
    "source": "Drewry \u00b7 manual",
+   "freq": "weekly",
    "price": 4526,
    "date": "2026-08-20",
    "stale_days": 5,

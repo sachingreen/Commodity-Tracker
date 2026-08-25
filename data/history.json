@@ -121,6 +121,102 @@
    "close": [
     4526
    ]
+  },
+  "COPPER": {
+   "dates": [],
+   "close": []
+  },
+  "ALUM": {
+   "dates": [],
+   "close": []
+  },
+  "NICKEL": {
+   "dates": [],
+   "close": []
+  },
+  "ZINC": {
+   "dates": [],
+   "close": []
+  },
+  "IRONORE": {
+   "dates": [],
+   "close": []
+  },
+  "GOLD": {
+   "dates": [],
+   "close": []
+  },
+  "SILVER": {
+   "dates": [],
+   "close": []
+  },
+  "WHEAT": {
+   "dates": [],
+   "close": []
+  },
+  "CORN": {
+   "dates": [],
+   "close": []
+  },
+  "RICE": {
+   "dates": [],
+   "close": []
+  },
+  "SUGAR": {
+   "dates": [],
+   "close": []
+  },
+  "SOY": {
+   "dates": [],
+   "close": []
+  },
+  "COFFEE": {
+   "dates": [],
+   "close": []
+  },
+  "COTTON": {
+   "dates": [],
+   "close": []
+  },
+  "P-GOLD": {
+   "dates": [],
+   "close": []
+  },
+  "P-SILVER": {
+   "dates": [],
+   "close": []
+  },
+  "P-COPPER": {
+   "dates": [],
+   "close": []
+  },
+  "P-WHEAT": {
+   "dates": [],
+   "close": []
+  },
+  "P-CORN": {
+   "dates": [],
+   "close": []
+  },
+  "P-SUGAR": {
+   "dates": [],
+   "close": []
+  },
+  "P-COFFEE": {
+   "dates": [],
+   "close": []
+  },
+  "P-SOY": {
+   "dates": [],
+   "close": []
+  },
+  "P-METALS": {
+   "dates": [],
+   "close": []
+  },
+  "P-OIL": {
+   "dates": [],
+   "close": []
   }
  }
 }
