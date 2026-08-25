@@ -45,7 +45,7 @@ PACE = float(os.environ.get("PACE", "1"))
 # slow spends three retries and escalating sleeps on each of 36 sources and
 # quietly burns twenty minutes of CI. Past the budget, remaining sources are
 # skipped and carry forward — a partial refresh beats a hung job.
-BUDGET = float(os.environ.get("BUDGET_SECONDS", "420"))
+BUDGET = float(os.environ.get("BUDGET_SECONDS", "600"))
 STARTED = time.monotonic()
 
 
@@ -163,7 +163,7 @@ def get(url, tries=2, timeout=30):
                 # --http1.1 because some of these hosts negotiate HTTP/2 and
                 # then reset the stream mid-response (curl error 92)
                 [CURL, "-sS", "-L", "--ipv4", "--http1.1", "--compressed",
-                 "--connect-timeout", "15", "--max-time", str(timeout),
+                 "--connect-timeout", "30", "--max-time", str(timeout),
                  "-A", UA, "-w", "\n__STATUS_%{http_code}__", url],
                 capture_output=True, text=True)
             body = r.stdout
@@ -363,29 +363,52 @@ def fetch_tiingo(ticker, backfill):
     return sorted(out), ("ok" if out else "no closes in response")
 
 
+# One response per state, reused across every mandi row in that state.
+_MANDI_CACHE: dict = {}
+
+
+def load_mandi_state(state, key):
+    """Fetch every reported price for one state, once.
+
+    Fourteen individually filtered calls to api.data.gov.in cost fourteen
+    connections to a host that regularly takes 15 seconds to answer from CI —
+    enough on its own to exhaust the run's time budget. One call per state
+    returns the same information for a fraction of the wait.
+    """
+    if state in _MANDI_CACHE:
+        return _MANDI_CACHE[state]
+    q = urllib.parse.urlencode({
+        "api-key": key, "format": "json", "limit": 2000,
+        "filters[state]": state,
+    })
+    body = get("https://api.data.gov.in/resource/"
+               "9ef84268-d588-465a-a308-a864a43d0070?" + q, timeout=60)
+    index = {}
+    if body and not body.startswith("__"):
+        try:
+            for r in json.loads(body).get("records", []):
+                index[(str(r.get("commodity", "")).strip().lower(),
+                       str(r.get("market", "")).strip().lower())] = r
+        except Exception:
+            pass
+    _MANDI_CACHE[state] = (index, body if not index else "ok")
+    return _MANDI_CACHE[state]
+
+
 def fetch_mandi(spec, key):
     if not key:
         return [], "no DATA_GOV_KEY set"
     commodity, market, state = spec.split("|")
-    q = urllib.parse.urlencode({
-        "api-key": key, "format": "json", "limit": 40,
-        "filters[commodity]": commodity,
-        "filters[market]": market,
-        "filters[state]": state,
-    })
-    body = get("https://api.data.gov.in/resource/"
-               "9ef84268-d588-465a-a308-a864a43d0070?" + q)
-    if not body or body.startswith("__"):
-        return [], (body or "no response")
-    try:
-        recs = json.loads(body).get("records") or []
-    except Exception:
-        return [], "unexpected response shape"
-    if not recs:
-        # normal, not an error: Agmarknet lists only markets that traded, and
-        # a mandi is closed on holidays and between harvests
-        return [], "no arrivals reported today"
-    r = recs[0]
+    index, status = load_mandi_state(state, key)
+    if not index:
+        return [], (status if isinstance(status, str) and status.startswith("__")
+                    else f"no records returned for {state}")
+
+    r = index.get((commodity.strip().lower(), market.strip().lower()))
+    if not r:
+        # normal: Agmarknet lists only markets that traded, and a mandi is
+        # closed on holidays and between harvests
+        return [], f"no arrivals for {commodity} at {market} today"
     try:
         px = float(str(r.get("modal_price", "")).replace(",", ""))
     except ValueError:
