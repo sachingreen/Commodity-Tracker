@@ -1,4 +1,4 @@
-# [Assay]([url](https://sachingreen.github.io/Commodity-Tracker/))
+# [Assay](https://sachingreen.github.io/Commodity-Tracker/)
 
 Commodity tape, correlations, custom indices and a landed-cost ledger.
 A React SPA on GitHub Pages, fed by a scheduled Python job.
