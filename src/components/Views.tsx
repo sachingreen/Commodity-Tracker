@@ -1,13 +1,13 @@
 import { useMemo, useState } from "react";
 import type { Basket, Board, Group, Highlight, Instrument, Rule, SeriesMap } from "../api/types";
-import { annualVol, change, correlate, basketIndex, project } from "../lib/stats";
+import { annualVol, change, correlate, basketIndex, basketRisk, periodOffset, project } from "../lib/stats";
 import { CONV, exporterStack, importerStack, leaks, perTonne, total,
   type ExporterInputs, type ImporterInputs } from "../lib/ledger";
 import { fmt, heat, pct, tone, uid } from "../lib/format";
-import { Cone, Overlay, Sparkline } from "./Charts";
+import { Cone, History, Overlay, Sparkline } from "./Charts";
 
 const GROUPS: Group[] = ["Energy", "Crypto", "Base metals", "Precious",
-  "Global agri", "India agri", "Freight"];
+  "Global agri", "India agri", "Freight", "Proxies"];
 
 /* ---------------------------------------------------------------- board */
 
@@ -63,7 +63,13 @@ export function BoardView({ board, series, selected, onSelect, watchlist, onTogg
                   <tr className="grouphead" key={g}><td colSpan={8}>{g}</td></tr>
                   {list.map((i) => {
                     const s = series[i.symbol];
-                    const cells = [1, 5, 21, 252].map((n) => change(s, n));
+                    // A monthly series has no one-day change. Reading its
+                    // previous observation under a "1D" heading would report
+                    // a month's move as a day's.
+                    const cells = (["1D", "1W", "1M", "1Y"] as const).map((p) => {
+                      const n = periodOffset(i.freq, p);
+                      return n == null ? null : change(s, n);
+                    });
                     const starred = watchlist.includes(i.symbol);
                     return (
                       <tr key={i.symbol} data-sym={i.symbol} aria-selected={i.symbol === selected}
@@ -83,7 +89,8 @@ export function BoardView({ board, series, selected, onSelect, watchlist, onTogg
                           </span>
                           <span className="src">
                             {i.source}
-                            {i.stale_days > 1 && <span className="stale"> · {i.stale_days}d old</span>}
+                            {i.freq !== "daily" && ` · ${i.freq}`}
+                            {i.stale_days > 2 && <span className="stale"> · {i.stale_days}d old</span>}
                           </span>
                         </td>
                         <td className="num">{fmt(i.price)}</td>
@@ -112,9 +119,10 @@ export function BoardView({ board, series, selected, onSelect, watchlist, onTogg
 
 export function DetailView({ instrument, series }: { instrument: Instrument; series: SeriesMap }) {
   const s = series[instrument.symbol];
-  const bands = project(instrument.price, s, 30);
+  const daily = instrument.freq === "daily";
+  const bands = daily ? project(instrument.price, s, 30) : [];
   const at = (n: number) => bands[n - 1];
-  const window = (s?.close ?? []).slice(-252);
+  const window = (s?.close ?? []).slice(-(daily ? 252 : 12));
 
   return (
     <div className="panel" style={{ marginTop: 26 }}>
@@ -130,15 +138,27 @@ export function DetailView({ instrument, series }: { instrument: Instrument; ser
           <span className="dunit">{instrument.unit}</span>
         </div>
       </div>
-      <div className="chartbox"><Cone series={s} spot={instrument.price} /></div>
+      {daily ? (
+        <div className="chartbox"><Cone series={s} spot={instrument.price} /></div>
+      ) : (
+        <>
+          <div className="chartbox"><History series={s} /></div>
+          <p className="hint" style={{ padding: "0 20px 16px" }}>
+            This benchmark is published {instrument.freq}, so there is no
+            forward band. A volatility cone built from {instrument.freq}{" "}
+            observations would look like the daily ones and mean something
+            entirely different.
+          </p>
+        </>
+      )}
       <dl className="dfoot">
         <div className="stat"><dt>Ann. volatility</dt>
-          <dd>{instrument.history > 5 ? `${annualVol(s).toFixed(1)}%` : "—"}</dd></div>
+          <dd>{daily && instrument.history > 5 ? `${annualVol(s).toFixed(1)}%` : "—"}</dd></div>
         <div className="stat"><dt>7-session range</dt>
           <dd>{at(7) ? `${fmt(at(7).lo1)} – ${fmt(at(7).hi1)}` : "—"}</dd></div>
         <div className="stat"><dt>30-session range</dt>
           <dd>{at(30) ? `${fmt(at(30).lo1)} – ${fmt(at(30).hi1)}` : "—"}</dd></div>
-        <div className="stat"><dt>52w high / low</dt>
+        <div className="stat"><dt>{daily ? "52w high / low" : "12m high / low"}</dt>
           <dd>{window.length > 1 ? `${fmt(Math.max(...window))} / ${fmt(Math.min(...window))}` : "—"}</dd></div>
       </dl>
     </div>
@@ -255,7 +275,10 @@ export function HighlightsView({ highlights, rules, board, onAdd, onRemove }: {
 
 export function CorrelationView({ board, series }: { board: Board; series: SeriesMap }) {
   const [sessions, setSessions] = useState(90);
-  const eligible = board.instruments.filter((i) => (series[i.symbol]?.close.length ?? 0) > 10);
+  // Mixing monthly and daily returns in one matrix produces a number with no
+  // meaning — the two are not observations of the same thing.
+  const eligible = board.instruments.filter(
+    (i) => i.freq === "daily" && (series[i.symbol]?.close.length ?? 0) > 10);
   const symbols = eligible.map((i) => i.symbol);
   const matrix = useMemo(() => correlate(symbols, series, sessions), [symbols.join(), series, sessions]);
   const excluded = board.instruments.length - eligible.length;
@@ -304,7 +327,7 @@ export function CorrelationView({ board, series }: { board: Board; series: Serie
         Pearson correlation of daily log returns, computed only across sessions both
         instruments actually traded. A blank cell means too few overlapping sessions to
         say anything — not a correlation of zero.
-        {excluded > 0 && ` ${excluded} instrument${excluded > 1 ? "s are" : " is"} absent for want of an archive.`}
+        {excluded > 0 && ` ${excluded} instrument${excluded > 1 ? "s are" : " is"} absent \u2014 either monthly benchmarks, or too new to have an archive.`}
       </p>
     </>
   );
@@ -319,6 +342,8 @@ export function BasketView({ board, series, basket, onChange }: {
   const eligible = board.instruments.filter((i) => (series[i.symbol]?.close.length ?? 0) > 1);
   const result = basketIndex(basket.legs, series, sessions);
   const nameOf = (s: string) => board.instruments.find((i) => i.symbol === s)?.name ?? s;
+  const freqOf = Object.fromEntries(board.instruments.map((i) => [i.symbol, i.freq]));
+  const risk = basketRisk(basket.legs, series, freqOf, sessions);
 
   const setLeg = (idx: number, patch: Partial<{ symbol: string; weight: number }>) =>
     onChange({ ...basket, legs: basket.legs.map((l, i) => (i === idx ? { ...l, ...patch } : l)) });
@@ -353,7 +378,57 @@ export function BasketView({ board, series, basket, onChange }: {
                 <div className="v">{result.dates.length}</div>
                 <div className="d flat">common to every leg</div>
               </div>
+              {risk && (
+                <>
+                  <div className="card">
+                    <div className="k">Basket volatility</div>
+                    <div className="v">{risk.volatility.toFixed(1)}%</div>
+                    <div className="d flat">annualised, {risk.sessions} sessions</div>
+                  </div>
+                  <div className="card">
+                    <div className="k">Diversification</div>
+                    <div className="v">{risk.diversification.toFixed(2)}×</div>
+                    <div className="d flat">
+                      vs {risk.weightedLegVol.toFixed(1)}% undiversified
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
+
+            {risk && (
+              <div className="stackwrap" style={{ marginTop: 16 }}>
+                <div className="stacklabel">
+                  <span>Share of basket variance</span>
+                  <em>{risk.contributions.length} legs</em>
+                </div>
+                <div className="legend" style={{ marginTop: 0, borderTop: "none" }}>
+                  {[...risk.contributions].sort((a, b) => b.percent - a.percent).map((c) => (
+                    <div className="lrow" key={c.symbol}>
+                      <span className="swatch" style={{
+                        background: c.percent > c.weight ? "var(--loss)" : "var(--gain)" }} />
+                      <span>{nameOf(c.symbol)}<br />
+                        <span className="src">
+                          {c.weight.toFixed(0)}% of the money ·{" "}
+                          {c.percent > c.weight ? "carrying more risk than its weight"
+                            : "carrying less risk than its weight"}
+                        </span>
+                      </span>
+                      <span className="num">{c.percent.toFixed(1)}%</span>
+                      <span className="num delta flat">
+                        {c.percent - c.weight >= 0 ? "+" : ""}{(c.percent - c.weight).toFixed(1)}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+                <p className="hint">
+                  Variance contributions are wᵢ·(Σw)ᵢ and sum to 100%. A leg can carry
+                  far more risk than its weight suggests — that is what this is for.
+                  {!!risk.skipped.length && ` Left out of the risk figures: ${
+                    risk.skipped.map((k) => `${nameOf(k.symbol)} (${k.reason})`).join(", ")}.`}
+                </p>
+              </div>
+            )}
           </>
         ) : (
           <p className="empty">

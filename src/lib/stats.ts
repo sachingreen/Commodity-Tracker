@@ -1,5 +1,22 @@
 import type { Series, SeriesMap } from "../api/types";
 
+/**
+ * How many observations back a given period is, for a series of this
+ * frequency. Returns null where the period is shorter than one observation —
+ * asking a monthly series for a one-day change has no answer, and returning
+ * the previous month under a "1D" heading would be a lie.
+ */
+export function periodOffset(
+  freq: "daily" | "weekly" | "monthly", period: "1D" | "1W" | "1M" | "1Y",
+): number | null {
+  const table = {
+    daily: { "1D": 1, "1W": 5, "1M": 21, "1Y": 252 },
+    weekly: { "1D": null, "1W": 1, "1M": 4, "1Y": 52 },
+    monthly: { "1D": null, "1W": null, "1M": 1, "1Y": 12 },
+  } as const;
+  return table[freq][period];
+}
+
 /** Close n sessions back, or null when history doesn't reach that far. */
 export function back(s: Series | undefined, n: number): number | null {
   if (!s) return null;
@@ -178,4 +195,115 @@ export function basketIndex(
     usable.reduce((acc, l, i) => acc + (l.weight / total) * (maps[i].get(d)! / base[i]) * 100, 0),
   );
   return { dates: common, values, skipped };
+}
+
+/* ---------------------------------------------------------------- risk --- */
+
+export interface BasketRisk {
+  /** Annualised volatility of the weighted basket, in percent. */
+  volatility: number;
+  /** Weighted average of the legs' own volatilities, in percent. */
+  weightedLegVol: number;
+  /**
+   * weightedLegVol / volatility. Above 1 means the legs partly offset each
+   * other; at exactly 1 they move as one asset and the basket diversifies
+   * nothing.
+   */
+  diversification: number;
+  /** Share of total basket variance attributable to each leg, in percent. */
+  contributions: { symbol: string; percent: number; weight: number }[];
+  /** Sessions common to every leg — the sample the numbers rest on. */
+  sessions: number;
+  /** Legs excluded, with the reason. */
+  skipped: { symbol: string; reason: string }[];
+}
+
+/**
+ * Risk decomposition for a weighted basket, from daily log returns.
+ *
+ * Portfolio variance is wᵀΣw; each leg's contribution to it is w_i·(Σw)_i.
+ * Contributions sum to 100% by construction, and a leg can contribute more
+ * than its weight — that is the point of computing this rather than eyeballing
+ * the weights.
+ *
+ * Only daily series qualify. Monthly benchmarks are excluded rather than
+ * mixed in: 12 observations a year cannot estimate a covariance worth acting
+ * on, and blending the two frequencies produces a number that looks precise
+ * and means nothing.
+ */
+export function basketRisk(
+  legs: { symbol: string; weight: number }[],
+  series: SeriesMap,
+  freq: Record<string, string>,
+  sessions = 252,
+): BasketRisk | null {
+  const skipped: { symbol: string; reason: string }[] = [];
+  const usable = legs.filter((l) => {
+    if (l.weight <= 0) { skipped.push({ symbol: l.symbol, reason: "zero weight" }); return false; }
+    if (freq[l.symbol] && freq[l.symbol] !== "daily") {
+      skipped.push({ symbol: l.symbol, reason: `${freq[l.symbol]} series` }); return false;
+    }
+    if ((series[l.symbol]?.close.length ?? 0) < 30) {
+      skipped.push({ symbol: l.symbol, reason: "not enough history" }); return false;
+    }
+    return true;
+  });
+  if (usable.length < 2) return null;
+
+  // align on dates every remaining leg traded, then take returns across them
+  const maps = usable.map((l) => {
+    const s = series[l.symbol];
+    const m = new Map<string, number>();
+    s.dates.forEach((d, i) => { if (s.close[i] > 0) m.set(d, s.close[i]); });
+    return m;
+  });
+  const shared = [...maps[0].keys()]
+    .filter((d) => maps.every((m) => m.has(d)))
+    .sort()
+    .slice(-(sessions + 1));
+  if (shared.length < 30) return null;
+
+  const rets = maps.map((m) => {
+    const out: number[] = [];
+    for (let i = 1; i < shared.length; i++) out.push(Math.log(m.get(shared[i])! / m.get(shared[i - 1])!));
+    return out;
+  });
+
+  const n = usable.length;
+  const total = usable.reduce((a, l) => a + l.weight, 0);
+  const w = usable.map((l) => l.weight / total);
+  const avg = rets.map((r) => r.reduce((a, b) => a + b, 0) / r.length);
+
+  // sample covariance
+  const cov: number[][] = Array.from({ length: n }, () => Array(n).fill(0));
+  const T = rets[0].length;
+  for (let i = 0; i < n; i++) {
+    for (let j = i; j < n; j++) {
+      let acc = 0;
+      for (let t = 0; t < T; t++) acc += (rets[i][t] - avg[i]) * (rets[j][t] - avg[j]);
+      cov[i][j] = cov[j][i] = acc / (T - 1);
+    }
+  }
+
+  // Σw, then variance = wᵀΣw
+  const sw = w.map((_, i) => w.reduce((acc, wj, j) => acc + cov[i][j] * wj, 0));
+  const variance = w.reduce((acc, wi, i) => acc + wi * sw[i], 0);
+  if (!(variance > 0)) return null;
+
+  const ann = Math.sqrt(variance * 252) * 100;
+  const legVols = cov.map((row, i) => Math.sqrt(row[i] * 252) * 100);
+  const weighted = w.reduce((acc, wi, i) => acc + wi * legVols[i], 0);
+
+  return {
+    volatility: ann,
+    weightedLegVol: weighted,
+    diversification: weighted / ann,
+    contributions: usable.map((l, i) => ({
+      symbol: l.symbol,
+      weight: w[i] * 100,
+      percent: (w[i] * sw[i]) / variance * 100,
+    })),
+    sessions: T,
+    skipped,
+  };
 }

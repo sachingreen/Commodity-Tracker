@@ -43,6 +43,7 @@ def main():
                 "price": sig(i["price"]),
                 "date": i.get("date", latest.get("asof")),
                 "stale_days": i.get("stale_days", 0),
+                "freq": i.get("freq", "daily"),
                 "history": i.get("history",
                                  len(history["series"].get(i["symbol"], {}).get("close", []))),
             }

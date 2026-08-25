@@ -4,4 +4,3 @@ public/api/
 __pycache__/
 *.pyc
 run.log
-tsconfig.tsbuildinfo

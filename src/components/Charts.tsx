@@ -138,3 +138,35 @@ export function Overlay({ symbols, names, seriesMap, sessions }: {
     </>
   );
 }
+
+/** Plain price history, for benchmarks published too infrequently to project. */
+export function History({ series }: { series?: Series }) {
+  const c = series?.close ?? [];
+  if (c.length < 2) {
+    return <p className="hint" style={{ padding: "30px 20px", textAlign: "center" }}>
+      Not enough history to draw a chart yet.
+    </p>;
+  }
+  const W = 900, H = 260, L = 56, R = 14, T = 14, B = 26;
+  let lo = Math.min(...c), hi = Math.max(...c);
+  const pad = (hi - lo) * 0.08 || 1; lo -= pad; hi += pad;
+  const X = (k: number) => L + (k / (c.length - 1)) * (W - L - R);
+  const Y = (v: number) => T + (1 - (v - lo) / (hi - lo || 1)) * (H - T - B);
+  const grid = Array.from({ length: 5 }, (_, k) => lo + (hi - lo) * k / 4);
+  return (
+    <svg className="chart" viewBox={`0 0 ${W} ${H}`} role="img" aria-label="Price history">
+      {grid.map((v, i) => (
+        <g key={i}>
+          <line x1={L} y1={Y(v)} x2={W - R} y2={Y(v)} stroke="var(--line)" strokeWidth="1" />
+          <text x={L - 8} y={Y(v) + 4} textAnchor="end" fill="var(--dim)"
+            fontFamily="var(--mono)" fontSize="11">{fmt(v)}</text>
+        </g>
+      ))}
+      <path d={c.map((v, k) => `${k ? "L" : "M"}${X(k).toFixed(1)} ${Y(v).toFixed(1)}`).join("")}
+        fill="none" stroke="var(--ink)" strokeWidth="1.6" strokeLinejoin="round" />
+      <text x={L} y={H - 7} fill="var(--dim)" fontFamily="var(--mono)" fontSize="10.5">
+        {c.length} observations
+      </text>
+    </svg>
+  );
+}

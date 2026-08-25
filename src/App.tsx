@@ -28,7 +28,7 @@ const DEFAULT_EXP: ExporterInputs = {
 };
 const DEFAULT_BASKET: Basket = {
   id: "basket-1", name: "My basket",
-  legs: [{ symbol: "BZ=F", weight: 40 }, { symbol: "HG=F", weight: 35 }, { symbol: "ZW=F", weight: 25 }],
+  legs: [{ symbol: "BZ=F", weight: 40 }, { symbol: "COPPER", weight: 35 }, { symbol: "WHEAT", weight: 25 }],
 };
 
 /** Read the tab from the URL hash so views are linkable and the back button works. */
@@ -175,7 +175,8 @@ export default function App() {
             <h2>What things cost today</h2>
             <p className="lede">
               {board.instruments.length} instruments across energy, crypto, metals, global agri
-              and Indian mandi prices. Star what you follow; select a row for its chart.
+              and Indian mandi prices. Rows under Proxies are commodity ETFs priced per
+              share — daily, but not the contract. Star what you follow; select a row for its chart.
             </p>
             <BoardView board={board} series={series} selected={selected} onSelect={setSelected}
               watchlist={watchlist} onToggleWatch={toggleWatch} flagged={flagged} />

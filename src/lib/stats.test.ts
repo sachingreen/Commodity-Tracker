@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { annualVol, back, basketIndex, change, correlate, drift, logReturns, pearson, project, rebase, sigma } from "./stats";
+import { annualVol, back, basketIndex, basketRisk, change, correlate, drift, logReturns, pearson, periodOffset, project, rebase, sigma } from "./stats";
 import type { Series, SeriesMap } from "../api/types";
 
 const days = (n: number, from = "2026-01-01") => {
@@ -177,5 +177,95 @@ describe("basketIndex", () => {
     const r = basketIndex([{ symbol: "X", weight: 1 }], {}, 30);
     expect(r.values).toEqual([]);
     expect(r.skipped).toEqual(["X"]);
+  });
+});
+
+describe("periodOffset", () => {
+  it("maps daily periods to sessions", () => {
+    expect(periodOffset("daily", "1D")).toBe(1);
+    expect(periodOffset("daily", "1Y")).toBe(252);
+  });
+
+  it("refuses a one-day change on a monthly series", () => {
+    expect(periodOffset("monthly", "1D")).toBeNull();
+    expect(periodOffset("monthly", "1W")).toBeNull();
+  });
+
+  it("reads a monthly series in months", () => {
+    expect(periodOffset("monthly", "1M")).toBe(1);
+    expect(periodOffset("monthly", "1Y")).toBe(12);
+  });
+
+  it("reads a weekly series in weeks", () => {
+    expect(periodOffset("weekly", "1W")).toBe(1);
+    expect(periodOffset("weekly", "1Y")).toBe(52);
+  });
+});
+
+describe("basketRisk", () => {
+  const daily = (n: number, seed: number, drift = 0) => {
+    let x = seed, p = 100;
+    const dates: string[] = [], close: number[] = [];
+    for (let i = 0; i < n; i++) {
+      x = (x * 1103515245 + 12345) % 2147483648;          // deterministic
+      p *= Math.exp(drift + ((x / 2147483648) - 0.5) * 0.04);
+      dates.push(`d${String(i).padStart(4, "0")}`);
+      close.push(p);
+    }
+    return { dates, close };
+  };
+  const F = { A: "daily", B: "daily", C: "daily", M: "monthly" };
+
+  it("returns null when fewer than two legs qualify", () => {
+    expect(basketRisk([{ symbol: "A", weight: 100 }], { A: daily(100, 7) }, F)).toBeNull();
+  });
+
+  it("contributions sum to 100%", () => {
+    const s = { A: daily(300, 7), B: daily(300, 99), C: daily(300, 4242) };
+    const r = basketRisk([
+      { symbol: "A", weight: 50 }, { symbol: "B", weight: 30 }, { symbol: "C", weight: 20 }], s, F)!;
+    const sum = r.contributions.reduce((a, c) => a + c.percent, 0);
+    expect(sum).toBeCloseTo(100, 6);
+  });
+
+  it("gives a perfectly correlated basket a diversification ratio of 1", () => {
+    const base = daily(300, 7);
+    const twin = { dates: base.dates, close: base.close.map((v) => v * 3) };
+    const r = basketRisk([{ symbol: "A", weight: 50 }, { symbol: "B", weight: 50 }],
+      { A: base, B: twin }, F)!;
+    expect(r.diversification).toBeCloseTo(1, 6);
+  });
+
+  it("shows diversification above 1 for uncorrelated legs", () => {
+    const s = { A: daily(400, 7), B: daily(400, 991) };
+    const r = basketRisk([{ symbol: "A", weight: 50 }, { symbol: "B", weight: 50 }], s, F)!;
+    expect(r.diversification).toBeGreaterThan(1);
+    expect(r.volatility).toBeLessThan(r.weightedLegVol);
+  });
+
+  it("excludes monthly series instead of mixing frequencies", () => {
+    const s = { A: daily(300, 7), B: daily(300, 99), M: daily(300, 5) };
+    const r = basketRisk([
+      { symbol: "A", weight: 40 }, { symbol: "B", weight: 40 }, { symbol: "M", weight: 20 }], s, F)!;
+    expect(r.contributions.map((c) => c.symbol)).toEqual(["A", "B"]);
+    expect(r.skipped).toContainEqual({ symbol: "M", reason: "monthly series" });
+  });
+
+  it("reweights the survivors so contributions still sum to 100%", () => {
+    const s = { A: daily(300, 7), B: daily(300, 99), M: daily(300, 5) };
+    const r = basketRisk([
+      { symbol: "A", weight: 40 }, { symbol: "B", weight: 40 }, { symbol: "M", weight: 20 }], s, F)!;
+    expect(r.contributions.reduce((a, c) => a + c.weight, 0)).toBeCloseTo(100, 6);
+  });
+
+  it("reports the sample size the estimate rests on", () => {
+    const s = { A: daily(120, 7), B: daily(120, 99) };
+    expect(basketRisk([{ symbol: "A", weight: 1 }, { symbol: "B", weight: 1 }], s, F)!.sessions)
+      .toBe(119);
+  });
+
+  it("returns null when the shared window is too short to estimate", () => {
+    const s = { A: daily(40, 7), B: { dates: ["x", "y"], close: [1, 2] } };
+    expect(basketRisk([{ symbol: "A", weight: 1 }, { symbol: "B", weight: 1 }], s, F)).toBeNull();
   });
 });

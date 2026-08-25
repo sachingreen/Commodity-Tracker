@@ -66,7 +66,14 @@ const run = async () => {
   const rows = $$("tr[data-sym]");
   T("board renders every instrument", rows.length === 26, `${rows.length} rows`);
   T("group headers present", $$("tr.grouphead").length === 7, `${$$("tr.grouphead").length} groups`);
-  T("live prices reach the DOM", /78\.4/.test(d.body.textContent), "Brent 78.40 found");
+  const monthlyRow = $$("tr[data-sym]").find((r) => r.dataset.sym === "COPPER");
+  const mCells = [...monthlyRow.querySelectorAll("td")].map((c) => c.textContent.trim());
+  T("monthly series reports no 1D or 1W change",
+    mCells[3] === "—" && mCells[4] === "—", `1D=${mCells[3]} 1W=${mCells[4]} 1M=${mCells[5]}`);
+  T("monthly series still reports 1M and 1Y", /%/.test(mCells[5]) && /%/.test(mCells[6]),
+    `1M=${mCells[5]} 1Y=${mCells[6]}`);
+  T("frequency labelled on the row", /monthly/.test(monthlyRow.textContent));
+  T("live prices reach the DOM", /95\.29|95\.3/.test(d.body.textContent), "Brent found");
   T("sample-data banner shown while seeded", /Sample data/.test(d.body.textContent));
   T("rows with no archive say so", /no archive/.test(d.body.textContent));
 
@@ -82,6 +89,16 @@ const run = async () => {
     !$$("svg.chart path").some((p) => /NaN|Infinity/.test(p.getAttribute("d") || "")));
   T("stats populated", $$(".stat dd").length === 4,
     $$(".stat dd").map((x) => x.textContent).join(" | "));
+
+  // monthly instruments must not be given a forward volatility band
+  const copperRow = $$("tr[data-sym]").find((r) => r.dataset.sym === "COPPER");
+  click(copperRow);
+  await tick();
+  T("no volatility cone on a monthly benchmark",
+    /no forward band/.test(d.body.textContent), $("#dname")?.textContent ?? $(".dhead h3").textContent);
+  T("history chart still drawn for it", $$("svg.chart path").length >= 1);
+  click($$("tr[data-sym]")[0]);
+  await tick();
 
   // ---- watchlist
   const star = $$(".star-btn")[0];
@@ -143,7 +160,10 @@ const run = async () => {
   nav("Correlation");
   await tick(120);
   const corrCells = $$("table.corr td");
-  T("correlation matrix rendered", corrCells.length > 100, `${corrCells.length} cells`);
+  T("correlation matrix rendered", corrCells.length > 20, `${corrCells.length} cells`);
+  T("monthly benchmarks excluded from correlations",
+    !$("table.corr").textContent.includes("Copper"),
+    "daily series only");
   const diag = $$("table.corr tbody tr").map((tr, i) => tr.querySelectorAll("td")[i]?.textContent);
   T("diagonal is 1.00", diag.every((v) => v === "1.00"), `first: ${diag[0]}`);
   T("no NaN in the matrix", !/NaN/.test($("table.corr").textContent));

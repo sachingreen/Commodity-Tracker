@@ -1,6 +1,6 @@
 export type Group =
   | "Energy" | "Crypto" | "Base metals" | "Precious"
-  | "Global agri" | "India agri" | "Freight";
+  | "Global agri" | "India agri" | "Freight" | "Proxies";
 
 export interface Instrument {
   symbol: string;
@@ -15,6 +15,8 @@ export interface Instrument {
   stale_days: number;
   /** Sessions of history available. 1 means no archive to compare against. */
   history: number;
+  /** Observation frequency. Only daily series get volatility bands. */
+  freq: "daily" | "weekly" | "monthly";
 }
 
 export interface Board {

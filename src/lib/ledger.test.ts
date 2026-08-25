@@ -15,13 +15,18 @@ const EXP: ExporterInputs = {
 
 describe("perTonne", () => {
   const series: SeriesMap = {
-    "HG=F": { dates: ["a", "b"], close: [4, 4.62] },          // USD/lb
+    COPPER: { dates: ["a", "b"], close: [9500, 10186] },      // USD/t (FRED)
     "AGM-CHILLI": { dates: ["a"], close: [18400] },           // INR/quintal
     "BZ=F": { dates: ["a"], close: [78.4] },                  // USD/barrel
   };
 
-  it("converts pounds to a tonne", () => {
-    expect(perTonne("HG=F", series, 0, 87.9)!).toBeCloseTo(4.62 * 2204.62, 4);
+  it("passes through a price already quoted per tonne", () => {
+    expect(perTonne("COPPER", series, 0, 87.9)!).toBeCloseTo(10186, 4);
+  });
+
+  it("converts US cents per pound to dollars per tonne", () => {
+    const softs: SeriesMap = { SUGAR: { dates: ["a"], close: [17.2] } };
+    expect(perTonne("SUGAR", softs, 0, 87.9)!).toBeCloseTo(17.2 * 22.0462, 4);
   });
 
   it("converts rupees per quintal to dollars per tonne", () => {
@@ -41,9 +46,13 @@ describe("perTonne", () => {
     expect(perTonne("AGM-CHILLI", series, 252, 87.9)).toBeNull();
   });
 
+  it("still refuses cargo that cannot be shipped by the tonne", () => {
+    expect(CONV["BTC-USD"]).toBeUndefined();
+  });
+
   it("only covers physically shippable cargo", () => {
     expect(CONV["BTC-USD"]).toBeUndefined();
-    expect(CONV["GC=F"]).toBeUndefined();
+    expect(CONV["GOLD"]).toBeUndefined();
   });
 });
 
@@ -115,25 +124,28 @@ describe("leaks", () => {
 const board: Board = {
   seed: false, asof: "2026-08-21",
   instruments: [
-    { symbol: "HG=F", name: "Copper", group: "Base metals", unit: "USD/lb", source: "COMEX",
-      price: 4.62, date: "2026-08-21", stale_days: 0, history: 400 },
+    { symbol: "COPPER", name: "Copper", group: "Base metals", unit: "USD/t",
+      source: "IMF via FRED", price: 10186, date: "2026-08-21", stale_days: 0,
+      history: 400, freq: "monthly" },
     { symbol: "AGM-CHILLI", name: "Chilli (Guntur)", group: "India agri", unit: "INR/qtl",
-      source: "Agmarknet", price: 18400, date: "2026-08-21", stale_days: 0, history: 1 },
+      source: "Agmarknet", price: 18400, date: "2026-08-21", stale_days: 0,
+      history: 1, freq: "daily" },
     { symbol: "WCI", name: "Drewry WCI 40ft", group: "Freight", unit: "USD/FEU",
-      source: "Drewry · manual", price: 4526, date: "2026-08-14", stale_days: 7, history: 1 },
+      source: "Drewry · manual", price: 4526, date: "2026-08-14", stale_days: 7,
+      history: 1, freq: "weekly" },
   ],
 };
 const series: SeriesMap = {
-  "HG=F": { dates: Array.from({ length: 30 }, (_, i) => `d${i}`),
-            close: Array.from({ length: 30 }, (_, i) => 4 + i * 0.02) },
+  COPPER: { dates: Array.from({ length: 30 }, (_, i) => `d${i}`),
+           close: Array.from({ length: 30 }, (_, i) => 9500 + i * 40) },
   "AGM-CHILLI": { dates: ["2026-08-21"], close: [18400] },
   WCI: { dates: ["2026-08-14"], close: [4526] },
 };
 
 describe("rule evaluation", () => {
   it("fires a threshold rule only when crossed", () => {
-    const hit: Rule = { id: "r1", kind: "threshold", symbol: "HG=F", direction: "above", value: 4 };
-    const miss: Rule = { id: "r2", kind: "threshold", symbol: "HG=F", direction: "above", value: 9 };
+    const hit: Rule = { id: "r1", kind: "threshold", symbol: "COPPER", direction: "above", value: 9000 };
+    const miss: Rule = { id: "r2", kind: "threshold", symbol: "COPPER", direction: "above", value: 99000 };
     expect(evaluateRules([hit], board, series, IMP, 87.9)).toHaveLength(1);
     expect(evaluateRules([miss], board, series, IMP, 87.9)).toHaveLength(0);
   });
@@ -144,7 +156,7 @@ describe("rule evaluation", () => {
   });
 
   it("fires a move rule on a real move", () => {
-    const r: Rule = { id: "r4", kind: "move", symbol: "HG=F", percent: 5, sessions: 20 };
+    const r: Rule = { id: "r4", kind: "move", symbol: "COPPER", percent: 5, sessions: 20 };
     const out = evaluateRules([r], board, series, IMP, 87.9);
     expect(out).toHaveLength(1);
     expect(out[0].tone).toBe("up");
@@ -156,7 +168,7 @@ describe("rule evaluation", () => {
   });
 
   it("fires a freight-share rule when freight dominates", () => {
-    const r: Rule = { id: "r6", kind: "freightShare", symbol: "HG=F", percent: 0.4 };
+    const r: Rule = { id: "r6", kind: "freightShare", symbol: "COPPER", percent: 0.4 };
     const out = evaluateRules([r], board, series, { ...IMP, freight: 200 }, 87.9);
     expect(out).toHaveLength(1);
     expect(out[0].tone).toBe("warn");

@@ -6,20 +6,23 @@ import { back } from "./stats";
  * Only instruments listed here can enter the ledger.
  */
 export const CONV: Record<string, Conversion> = {
+  // FRED quotes metals and most grains in USD per tonne already, so most
+  // factors are 1. The exceptions are crude (barrels), the softs (US cents
+  // per pound) and mandi prices (rupees per quintal).
   "BZ=F": { factor: 7.33, currency: "USD" },      // barrels per tonne
   "CL=F": { factor: 7.33, currency: "USD" },
-  "HG=F": { factor: 2204.62, currency: "USD" },   // lb per tonne
-  "ALI=F": { factor: 1, currency: "USD" },
-  "LME-NI": { factor: 1, currency: "USD" },
-  "LME-ZN": { factor: 1, currency: "USD" },
-  "HRC=F": { factor: 1, currency: "USD" },
-  "ZC=F": { factor: 0.39368, currency: "USD" },   // USc/bu → USD/t
-  "ZW=F": { factor: 0.36744, currency: "USD" },
-  "ZS=F": { factor: 0.36744, currency: "USD" },
-  "ZR=F": { factor: 22.046, currency: "USD" },    // cwt per tonne
-  "SB=F": { factor: 22.0462, currency: "USD" },   // USc/lb → USD/t
-  "KC=F": { factor: 22.0462, currency: "USD" },
-  "CT=F": { factor: 22.0462, currency: "USD" },
+  COPPER: { factor: 1, currency: "USD" },
+  ALUM: { factor: 1, currency: "USD" },
+  NICKEL: { factor: 1, currency: "USD" },
+  ZINC: { factor: 1, currency: "USD" },
+  IRONORE: { factor: 1, currency: "USD" },
+  WHEAT: { factor: 1, currency: "USD" },
+  CORN: { factor: 1, currency: "USD" },
+  RICE: { factor: 1, currency: "USD" },
+  SOY: { factor: 1, currency: "USD" },
+  SUGAR: { factor: 22.0462, currency: "USD" },    // USc/lb → USD/t
+  COFFEE: { factor: 22.0462, currency: "USD" },
+  COTTON: { factor: 22.0462, currency: "USD" },
   "AGM-CHILLI": { factor: 10, currency: "INR" },  // quintals per tonne
   "AGM-TURMERIC": { factor: 10, currency: "INR" },
   "AGM-COTTON": { factor: 10, currency: "INR" },
