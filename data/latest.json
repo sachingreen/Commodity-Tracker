@@ -1,6 +1,6 @@
 {
- "seed": true,
- "asof": "2026-08-21",
+ "seed": false,
+ "asof": "2026-08-25",
  "instruments": [
   {
    "symbol": "BZ=F",
@@ -10,9 +10,9 @@
    "source": "EIA via FRED",
    "freq": "daily",
    "price": 95.29,
-   "date": "2026-08-21",
-   "stale_days": 0,
-   "history": 400
+   "date": "2026-08-18",
+   "stale_days": 7,
+   "history": 871
   },
   {
    "symbol": "CL=F",
@@ -21,10 +21,10 @@
    "unit": "USD/bbl",
    "source": "EIA via FRED",
    "freq": "daily",
-   "price": 91.4,
-   "date": "2026-08-21",
-   "stale_days": 0,
-   "history": 400
+   "price": 86.48,
+   "date": "2026-08-18",
+   "stale_days": 7,
+   "history": 859
   },
   {
    "symbol": "NG=F",
@@ -33,10 +33,10 @@
    "unit": "USD/MMBtu",
    "source": "EIA via FRED",
    "freq": "daily",
-   "price": 3.42,
-   "date": "2026-08-21",
-   "stale_days": 0,
-   "history": 400
+   "price": 2.82,
+   "date": "2026-08-18",
+   "stale_days": 7,
+   "history": 860
   },
   {
    "symbol": "INR=X",
@@ -45,34 +45,94 @@
    "unit": "INR",
    "source": "Fed via FRED",
    "freq": "daily",
-   "price": 87.9,
+   "price": 95.7,
    "date": "2026-08-21",
-   "stale_days": 0,
-   "history": 400
+   "stale_days": 4,
+   "history": 864
   },
   {
    "symbol": "BTC-USD",
    "name": "Bitcoin",
    "group": "Crypto",
    "unit": "USD",
-   "source": "CoinGecko",
+   "source": "Coinbase",
    "freq": "daily",
-   "price": 79436.0,
-   "date": "2026-08-21",
+   "price": 80527.32,
+   "date": "2026-08-25",
    "stale_days": 0,
-   "history": 400
+   "history": 350
   },
   {
    "symbol": "ETH-USD",
    "name": "Ethereum",
    "group": "Crypto",
    "unit": "USD",
-   "source": "CoinGecko",
+   "source": "Coinbase",
    "freq": "daily",
-   "price": 3180.0,
-   "date": "2026-08-21",
+   "price": 2498.58,
+   "date": "2026-08-25",
    "stale_days": 0,
-   "history": 400
+   "history": 350
+  },
+  {
+   "symbol": "SOL-USD",
+   "name": "Solana",
+   "group": "Crypto",
+   "unit": "USD",
+   "source": "Coinbase",
+   "freq": "daily",
+   "price": 100.57,
+   "date": "2026-08-25",
+   "stale_days": 0,
+   "history": 350
+  },
+  {
+   "symbol": "VIX",
+   "name": "VIX",
+   "group": "Macro",
+   "unit": "index",
+   "source": "CBOE via FRED",
+   "freq": "daily",
+   "price": 15.13,
+   "date": "2026-08-21",
+   "stale_days": 4,
+   "history": 890
+  },
+  {
+   "symbol": "US10Y",
+   "name": "US 10-year yield",
+   "group": "Macro",
+   "unit": "%",
+   "source": "Treasury via FRED",
+   "freq": "daily",
+   "price": 4.74,
+   "date": "2026-08-21",
+   "stale_days": 4,
+   "history": 863
+  },
+  {
+   "symbol": "DXY",
+   "name": "Broad dollar index",
+   "group": "Macro",
+   "unit": "index",
+   "source": "Fed via FRED",
+   "freq": "daily",
+   "price": 118.0628,
+   "date": "2026-08-21",
+   "stale_days": 4,
+   "history": 864
+  },
+  {
+   "symbol": "EURUSD",
+   "name": "EUR/USD",
+   "group": "Macro",
+   "unit": "USD",
+   "source": "Fed via FRED",
+   "freq": "daily",
+   "price": 1.1684,
+   "date": "2026-08-21",
+   "stale_days": 4,
+   "history": 864
   },
   {
    "symbol": "COPPER",
@@ -81,10 +141,10 @@
    "unit": "USD/t",
    "source": "IMF via FRED",
    "freq": "monthly",
-   "price": 10186.0,
-   "date": "2026-08-01",
-   "stale_days": 0,
-   "history": 60
+   "price": 13542.8209,
+   "date": "2026-07-01",
+   "stale_days": 55,
+   "history": 327
   },
   {
    "symbol": "ALUM",
@@ -93,10 +153,10 @@
    "unit": "USD/t",
    "source": "IMF via FRED",
    "freq": "monthly",
-   "price": 2585.0,
-   "date": "2026-08-01",
-   "stale_days": 0,
-   "history": 60
+   "price": 3158.265,
+   "date": "2026-07-01",
+   "stale_days": 55,
+   "history": 415
   },
   {
    "symbol": "NICKEL",
@@ -105,10 +165,10 @@
    "unit": "USD/t",
    "source": "IMF via FRED",
    "freq": "monthly",
-   "price": 16707.0,
-   "date": "2026-08-01",
-   "stale_days": 0,
-   "history": 60
+   "price": 16632.3614,
+   "date": "2026-07-01",
+   "stale_days": 55,
+   "history": 401
   },
   {
    "symbol": "ZINC",
@@ -117,10 +177,10 @@
    "unit": "USD/t",
    "source": "IMF via FRED",
    "freq": "monthly",
-   "price": 3824.0,
-   "date": "2026-08-01",
-   "stale_days": 0,
-   "history": 60
+   "price": 3593.775,
+   "date": "2026-07-01",
+   "stale_days": 55,
+   "history": 395
   },
   {
    "symbol": "IRONORE",
@@ -129,34 +189,10 @@
    "unit": "USD/t",
    "source": "IMF via FRED",
    "freq": "monthly",
-   "price": 103.0,
-   "date": "2026-08-01",
-   "stale_days": 0,
-   "history": 60
-  },
-  {
-   "symbol": "GOLD",
-   "name": "Gold",
-   "group": "Precious",
-   "unit": "USD/oz",
-   "source": "IMF via FRED",
-   "freq": "monthly",
-   "price": 3410.0,
-   "date": "2026-08-01",
-   "stale_days": 0,
-   "history": 60
-  },
-  {
-   "symbol": "SILVER",
-   "name": "Silver",
-   "group": "Precious",
-   "unit": "USD/oz",
-   "source": "IMF via FRED",
-   "freq": "monthly",
-   "price": 38.9,
-   "date": "2026-08-01",
-   "stale_days": 0,
-   "history": 60
+   "price": 101.5957,
+   "date": "2026-07-01",
+   "stale_days": 55,
+   "history": 259
   },
   {
    "symbol": "WHEAT",
@@ -165,10 +201,10 @@
    "unit": "USD/t",
    "source": "IMF via FRED",
    "freq": "monthly",
-   "price": 232.0,
-   "date": "2026-08-01",
-   "stale_days": 0,
-   "history": 60
+   "price": 228.7388,
+   "date": "2026-07-01",
+   "stale_days": 55,
+   "history": 415
   },
   {
    "symbol": "CORN",
@@ -177,10 +213,10 @@
    "unit": "USD/t",
    "source": "IMF via FRED",
    "freq": "monthly",
-   "price": 196.0,
-   "date": "2026-08-01",
-   "stale_days": 0,
-   "history": 60
+   "price": 213.1902,
+   "date": "2026-07-01",
+   "stale_days": 55,
+   "history": 415
   },
   {
    "symbol": "RICE",
@@ -189,10 +225,10 @@
    "unit": "USD/t",
    "source": "IMF via FRED",
    "freq": "monthly",
-   "price": 412.0,
-   "date": "2026-08-01",
-   "stale_days": 0,
-   "history": 60
+   "price": 464.0,
+   "date": "2026-07-01",
+   "stale_days": 55,
+   "history": 195
   },
   {
    "symbol": "SUGAR",
@@ -201,10 +237,10 @@
    "unit": "USc/lb",
    "source": "IMF via FRED",
    "freq": "monthly",
-   "price": 17.2,
-   "date": "2026-08-01",
-   "stale_days": 0,
-   "history": 60
+   "price": 14.8123,
+   "date": "2026-07-01",
+   "stale_days": 55,
+   "history": 415
   },
   {
    "symbol": "SOY",
@@ -213,10 +249,10 @@
    "unit": "USD/t",
    "source": "IMF via FRED",
    "freq": "monthly",
-   "price": 438.0,
-   "date": "2026-08-01",
-   "stale_days": 0,
-   "history": 60
+   "price": 442.4506,
+   "date": "2026-07-01",
+   "stale_days": 55,
+   "history": 365
   },
   {
    "symbol": "COFFEE",
@@ -225,10 +261,10 @@
    "unit": "USc/lb",
    "source": "IMF via FRED",
    "freq": "monthly",
-   "price": 298.0,
-   "date": "2026-08-01",
-   "stale_days": 0,
-   "history": 60
+   "price": 359.1623,
+   "date": "2026-07-01",
+   "stale_days": 55,
+   "history": 415
   },
   {
    "symbol": "COTTON",
@@ -237,10 +273,10 @@
    "unit": "USc/lb",
    "source": "IMF via FRED",
    "freq": "monthly",
-   "price": 68.4,
-   "date": "2026-08-01",
-   "stale_days": 0,
-   "history": 60
+   "price": 88.775,
+   "date": "2026-07-01",
+   "stale_days": 55,
+   "history": 415
   },
   {
    "symbol": "AGM-CHILLI",
@@ -251,7 +287,7 @@
    "freq": "daily",
    "price": 18400.0,
    "date": "2026-08-21",
-   "stale_days": 0,
+   "stale_days": 4,
    "history": 1
   },
   {
@@ -263,7 +299,7 @@
    "freq": "daily",
    "price": 14250.0,
    "date": "2026-08-21",
-   "stale_days": 0,
+   "stale_days": 4,
    "history": 1
   },
   {
@@ -275,7 +311,7 @@
    "freq": "daily",
    "price": 7650.0,
    "date": "2026-08-21",
-   "stale_days": 0,
+   "stale_days": 4,
    "history": 1
   },
   {
@@ -287,6 +323,18 @@
    "freq": "daily",
    "price": 2180.0,
    "date": "2026-08-21",
+   "stale_days": 4,
+   "history": 1
+  },
+  {
+   "symbol": "AGM-SOYBEAN",
+   "name": "Soybean (Indore)",
+   "group": "India agri",
+   "unit": "INR/qtl",
+   "source": "Agmarknet",
+   "freq": "daily",
+   "price": 5595.0,
+   "date": "2026-08-25",
    "stale_days": 0,
    "history": 1
   },
@@ -299,7 +347,7 @@
    "freq": "daily",
    "price": 2841.0,
    "date": "2026-08-21",
-   "stale_days": 0,
+   "stale_days": 4,
    "history": 1
   },
   {
@@ -311,7 +359,7 @@
    "freq": "weekly",
    "price": 4526.0,
    "date": "2026-08-21",
-   "stale_days": 0,
+   "stale_days": 4,
    "history": 1
   }
  ]
