@@ -57,7 +57,7 @@
    "unit": "USD",
    "source": "Coinbase",
    "freq": "daily",
-   "price": 80527.32,
+   "price": 80701.05,
    "date": "2026-08-25",
    "stale_days": 0,
    "history": 350
@@ -69,7 +69,7 @@
    "unit": "USD",
    "source": "Coinbase",
    "freq": "daily",
-   "price": 2498.58,
+   "price": 2507.27,
    "date": "2026-08-25",
    "stale_days": 0,
    "history": 350
@@ -81,7 +81,7 @@
    "unit": "USD",
    "source": "Coinbase",
    "freq": "daily",
-   "price": 100.57,
+   "price": 101.49,
    "date": "2026-08-25",
    "stale_days": 0,
    "history": 350
@@ -345,7 +345,7 @@
    "unit": "index",
    "source": "Baltic Exch \u00b7 manual",
    "freq": "daily",
-   "price": 2841.0,
+   "price": 2841,
    "date": "2026-08-21",
    "stale_days": 4,
    "history": 1
@@ -357,9 +357,9 @@
    "unit": "USD/FEU",
    "source": "Drewry \u00b7 manual",
    "freq": "weekly",
-   "price": 4526.0,
-   "date": "2026-08-21",
-   "stale_days": 4,
+   "price": 4526,
+   "date": "2026-08-20",
+   "stale_days": 5,
    "history": 1
   }
  ]
