@@ -24,6 +24,17 @@ once replacement data is actually in hand.
 """
 import json, os, shutil, subprocess, sys, time, urllib.error, urllib.parse, urllib.request, datetime as dt
 
+def env_key(name):
+    """Read an API key, stripped.
+
+    A key pasted into a CI secret box usually carries a trailing newline. That
+    newline lands inside the query string and curl rejects the entire URL with
+    "Malformed input to a URL function" — which reads like a code bug and is
+    not one.
+    """
+    return (os.environ.get(name) or "").strip()
+
+
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA = os.path.join(ROOT, "data")
 UA = ("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 "
@@ -124,7 +135,9 @@ def get(url, tries=3, timeout=30):
             r = subprocess.run(
                 # -L follows redirects; --ipv4 avoids the long IPv6 stall that
                 # CI runners hit on hosts with AAAA records they cannot reach
-                [CURL, "-sS", "-L", "--ipv4", "--compressed",
+                # --http1.1 because some of these hosts negotiate HTTP/2 and
+                # then reset the stream mid-response (curl error 92)
+                [CURL, "-sS", "-L", "--ipv4", "--http1.1", "--compressed",
                  "--connect-timeout", "15", "--max-time", str(timeout),
                  "-A", UA, "-w", "\n__STATUS_%{http_code}__", url],
                 capture_output=True, text=True)
@@ -214,6 +227,8 @@ def fetch_alpha(ticker, key, backfill):
     """
     if not key:
         return [], "no ALPHAVANTAGE_KEY set"
+    if not key.isalnum():
+        return [], "ALPHAVANTAGE_KEY has stray characters — re-paste the secret"
     size = "full" if backfill else "compact"
     url = ("https://www.alphavantage.co/query?function=TIME_SERIES_DAILY"
            f"&symbol={ticker}&outputsize={size}&apikey={key}")
@@ -242,7 +257,7 @@ def fetch_tiingo(ticker, backfill):
     Unadjusted closes are used deliberately: these stand in for a commodity
     price, so dividend reinvestment would be the wrong adjustment.
     """
-    key = os.environ.get("TIINGO_KEY")
+    key = env_key("TIINGO_KEY")
     if not key:
         return [], "no TIINGO_KEY set"
     start = (dt.date.today() - dt.timedelta(days=1100 if backfill else 14)).isoformat()
@@ -311,7 +326,7 @@ def load(name, default):
 def pull(sym, spec, backfill, key, manual):
     provider, code = spec[0], spec[1]
     if provider == "alpha":
-        points, why = fetch_alpha(code, os.environ.get("ALPHAVANTAGE_KEY"), backfill)
+        points, why = fetch_alpha(code, env_key("ALPHAVANTAGE_KEY"), backfill)
         if points:
             return points, "ok · alphavantage"
         # the free tier answers a spent quota with HTTP 200 and a message, so
@@ -361,7 +376,7 @@ def check(key, manual):
 
 def main():
     backfill = "--backfill" in sys.argv
-    key = os.environ.get("DATA_GOV_KEY")
+    key = env_key("DATA_GOV_KEY")
     manual = load("manual.json", {})
 
     if "--check" in sys.argv:
