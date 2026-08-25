@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import type { Basket, Board, Group, Highlight, Instrument, Rule, SeriesMap } from "../api/types";
-import { annualVol, change, correlate, basketIndex, basketRisk, periodOffset, project, rangePosition } from "../lib/stats";
+import { annualVol, change, correlate, basketIndex, basketRisk, dollarBeta, periodOffset, project, rangePosition } from "../lib/stats";
 import { CONV, exporterStack, importerStack, leaks, perTonne, total,
   type ExporterInputs, type ImporterInputs } from "../lib/ledger";
 import { fmt, heat, pct, tone, uid } from "../lib/format";
@@ -135,6 +135,7 @@ export function DetailView({ instrument, series }: { instrument: Instrument; ser
   const at = (n: number) => bands[n - 1];
   const window = (s?.close ?? []).slice(-(daily ? 252 : 12));
   const pos = rangePosition(s);
+  const dxy = dollarBeta(instrument.symbol, "DXY", series);
 
   return (
     <div className="panel" style={{ marginTop: 26 }}>
@@ -172,6 +173,8 @@ export function DetailView({ instrument, series }: { instrument: Instrument; ser
           <dd>{at(30) ? `${fmt(at(30).lo1)} – ${fmt(at(30).hi1)}` : "—"}</dd></div>
         <div className="stat"><dt>{daily ? "52w high / low" : "12m high / low"}</dt>
           <dd>{window.length > 1 ? `${fmt(Math.max(...window))} / ${fmt(Math.min(...window))}` : "—"}</dd></div>
+        <div className="stat"><dt>Dollar beta</dt>
+          <dd>{dxy ? `${dxy.beta.toFixed(2)} · r² ${dxy.rSquared.toFixed(2)}` : "—"}</dd></div>
       </dl>
       {pos && (
         <div className="leak" style={{ margin: 0, borderTop: "1px solid var(--line)" }}>
