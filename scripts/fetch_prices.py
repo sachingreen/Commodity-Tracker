@@ -122,7 +122,10 @@ def get(url, tries=3, timeout=30):
     if CURL:
         for i in range(tries):
             r = subprocess.run(
-                [CURL, "-sS", "--compressed", "--max-time", str(timeout),
+                # -L follows redirects; --ipv4 avoids the long IPv6 stall that
+                # CI runners hit on hosts with AAAA records they cannot reach
+                [CURL, "-sS", "-L", "--ipv4", "--compressed",
+                 "--connect-timeout", "15", "--max-time", str(timeout),
                  "-A", UA, "-w", "\n__STATUS_%{http_code}__", url],
                 capture_output=True, text=True)
             body = r.stdout
@@ -131,10 +134,18 @@ def get(url, tries=3, timeout=30):
                 code = status.rstrip("_")
                 if code == "200":
                     return body
-                if i == tries - 1:
-                    return f"__HTTP_{code}__"
+                if code != "000":
+                    if i == tries - 1:
+                        return f"__HTTP_{code}__"
+                elif i == tries - 1:
+                    # 000 means the request never completed. curl explains why
+                    # on stderr, and that message is the whole diagnosis —
+                    # discarding it turns a solvable problem into a mystery.
+                    why = (r.stderr or "").strip().replace("\n", " ")[:90]
+                    return f"__CURL_{why or 'no response, no error'}__"
             elif i == tries - 1:
-                return f"__ERR_curl_{r.returncode}__"
+                why = (r.stderr or "").strip().replace("\n", " ")[:90]
+                return f"__CURL_exit{r.returncode}_{why}__"
             time.sleep(3 * (i + 1))
 
     for i in range(tries):
