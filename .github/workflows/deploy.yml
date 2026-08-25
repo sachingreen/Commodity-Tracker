@@ -53,9 +53,9 @@ jobs:
           TIINGO_KEY: ${{ secrets.TIINGO_KEY }}
         run: |
           if [ "${{ inputs.backfill }}" = "true" ]; then
-            python scripts/fetch_prices.py --backfill | tee run.log
+            python -u scripts/fetch_prices.py --backfill 2>&1 | tee run.log
           else
-            python scripts/fetch_prices.py | tee run.log
+            python -u scripts/fetch_prices.py 2>&1 | tee run.log
           fi
 
       - name: Report what landed

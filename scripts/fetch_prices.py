@@ -41,6 +41,16 @@ UA = ("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 "
       "(KHTML, like Gecko) Chrome/124.0 Safari/537.36")
 MAX_SESSIONS = 900          # monthly series need years to fill a chart
 PACE = float(os.environ.get("PACE", "1"))
+# Hard ceiling on the whole fetch. Without one, a run where every source is
+# slow spends three retries and escalating sleeps on each of 36 sources and
+# quietly burns twenty minutes of CI. Past the budget, remaining sources are
+# skipped and carry forward — a partial refresh beats a hung job.
+BUDGET = float(os.environ.get("BUDGET_SECONDS", "420"))
+STARTED = time.monotonic()
+
+
+def out_of_time():
+    return time.monotonic() - STARTED > BUDGET
 
 # symbol -> (provider, code, name, group, unit, freq, source label)
 SOURCES = {
@@ -122,7 +132,7 @@ def sane(sym, px):
 CURL = shutil.which("curl")
 
 
-def get(url, tries=3, timeout=30):
+def get(url, tries=2, timeout=30):
     """Return the response body as text, or a __MARKER__ describing the failure.
 
     curl goes first. Python's urllib times out against FRED on some networks
@@ -159,7 +169,7 @@ def get(url, tries=3, timeout=30):
             elif i == tries - 1:
                 why = (r.stderr or "").strip().replace("\n", " ")[:90]
                 return f"__CURL_exit{r.returncode}_{why}__"
-            time.sleep(3 * (i + 1))
+            time.sleep(2)
 
     for i in range(tries):
         try:
@@ -351,6 +361,9 @@ def check(key, manual):
     print("Probing every configured source. Nothing will be written.\n")
     bad = []
     for sym, spec in SOURCES.items():
+        if out_of_time():
+            print(f"  {sym:14} {'—':>12}  skipped, budget spent")
+            continue
         points, why = pull(sym, spec, False, key, manual)
         clean = [(d, p) for d, p in points if sane(sym, p)]
         if clean:
@@ -391,7 +404,10 @@ def main():
 
     for sym, spec in SOURCES.items():
         _, _, name, group, unit, freq, label = spec
-        points, why = pull(sym, spec, backfill, key, manual)
+        if out_of_time():
+            points, why = [], f"skipped — {BUDGET:.0f}s budget spent"
+        else:
+            points, why = pull(sym, spec, backfill, key, manual)
         clean = [(d, p) for d, p in points if sane(sym, p)]
         rejected += len(points) - len(clean)
 
