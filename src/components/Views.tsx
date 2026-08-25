@@ -5,6 +5,7 @@ import { CONV, exporterStack, importerStack, leaks, perTonne, total,
   type ExporterInputs, type ImporterInputs } from "../lib/ledger";
 import { fmt, heat, pct, tone, uid } from "../lib/format";
 import { Cone, History, Overlay, Sparkline } from "./Charts";
+import { MarketsStrip } from "./Markets";
 
 /**
  * A monthly IMF benchmark published for 1 July is perfectly current in
@@ -35,6 +36,7 @@ export function BoardView({ board, series, selected, onSelect, watchlist, onTogg
 
   return (
     <>
+      <MarketsStrip board={board} series={series} />
       <div className="chips">
         {(["All", "Watchlist", ...groups] as const).map((g) => (
           <button key={g} className="chip-btn" aria-pressed={group === g}

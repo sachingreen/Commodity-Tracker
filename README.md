@@ -61,6 +61,12 @@ node test/app.test.mjs           # 37 integration tests against the built app
 | India basis | Indian mandi prices against world benchmarks, both in USD/tonne |
 | Basket | Weighted custom index, plus volatility and per-leg variance contributions |
 
+**World markets strip.** The board opens with today's move for each country
+market and a count of how many are higher. Country names rather than index
+names: most people know whether they care about India or Japan, and far fewer
+know what the KOSPI covers. The strip hides itself when no market row has data
+rather than showing a line of dashes.
+
 **Country markets.** One index per country — India, US, UK, Eurozone, Japan,
 Korea, China, Brazil — rather than an average of several. Blending Sensex and
 Nifty produces a number that matches neither and has to be explained; "India
