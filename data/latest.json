@@ -1,0 +1,292 @@
+{
+ "seed": true,
+ "asof": "2026-08-21",
+ "instruments": [
+  {
+   "symbol": "BZ=F",
+   "name": "Brent Crude",
+   "group": "Energy",
+   "unit": "USD/bbl",
+   "source": "ICE",
+   "price": 78.4,
+   "date": "2026-08-21",
+   "stale_days": 0,
+   "history": 400
+  },
+  {
+   "symbol": "CL=F",
+   "name": "WTI Crude",
+   "group": "Energy",
+   "unit": "USD/bbl",
+   "source": "NYMEX",
+   "price": 74.8,
+   "date": "2026-08-21",
+   "stale_days": 0,
+   "history": 400
+  },
+  {
+   "symbol": "NG=F",
+   "name": "Natural Gas",
+   "group": "Energy",
+   "unit": "USD/MMBtu",
+   "source": "NYMEX",
+   "price": 3.42,
+   "date": "2026-08-21",
+   "stale_days": 0,
+   "history": 400
+  },
+  {
+   "symbol": "BTC-USD",
+   "name": "Bitcoin",
+   "group": "Crypto",
+   "unit": "USD",
+   "source": "Coinbase",
+   "price": 96400.0,
+   "date": "2026-08-21",
+   "stale_days": 0,
+   "history": 400
+  },
+  {
+   "symbol": "ETH-USD",
+   "name": "Ethereum",
+   "group": "Crypto",
+   "unit": "USD",
+   "source": "Coinbase",
+   "price": 3180.0,
+   "date": "2026-08-21",
+   "stale_days": 0,
+   "history": 400
+  },
+  {
+   "symbol": "HG=F",
+   "name": "Copper",
+   "group": "Base metals",
+   "unit": "USD/lb",
+   "source": "COMEX",
+   "price": 4.62,
+   "date": "2026-08-21",
+   "stale_days": 0,
+   "history": 400
+  },
+  {
+   "symbol": "ALI=F",
+   "name": "Aluminium",
+   "group": "Base metals",
+   "unit": "USD/t",
+   "source": "CME",
+   "price": 2585.0,
+   "date": "2026-08-21",
+   "stale_days": 0,
+   "history": 400
+  },
+  {
+   "symbol": "LME-NI",
+   "name": "Nickel",
+   "group": "Base metals",
+   "unit": "USD/t",
+   "source": "LME \u00b7 manual",
+   "price": 16707.0,
+   "date": "2026-08-21",
+   "stale_days": 0,
+   "history": 1
+  },
+  {
+   "symbol": "LME-ZN",
+   "name": "Zinc",
+   "group": "Base metals",
+   "unit": "USD/t",
+   "source": "LME \u00b7 manual",
+   "price": 3824.0,
+   "date": "2026-08-21",
+   "stale_days": 0,
+   "history": 1
+  },
+  {
+   "symbol": "HRC=F",
+   "name": "Steel HRC",
+   "group": "Base metals",
+   "unit": "USD/t",
+   "source": "CME",
+   "price": 790.0,
+   "date": "2026-08-21",
+   "stale_days": 0,
+   "history": 400
+  },
+  {
+   "symbol": "GC=F",
+   "name": "Gold",
+   "group": "Precious",
+   "unit": "USD/oz",
+   "source": "COMEX",
+   "price": 3410.0,
+   "date": "2026-08-21",
+   "stale_days": 0,
+   "history": 400
+  },
+  {
+   "symbol": "SI=F",
+   "name": "Silver",
+   "group": "Precious",
+   "unit": "USD/oz",
+   "source": "COMEX",
+   "price": 38.9,
+   "date": "2026-08-21",
+   "stale_days": 0,
+   "history": 400
+  },
+  {
+   "symbol": "ZC=F",
+   "name": "Corn",
+   "group": "Global agri",
+   "unit": "USc/bu",
+   "source": "CBOT",
+   "price": 432.0,
+   "date": "2026-08-21",
+   "stale_days": 0,
+   "history": 400
+  },
+  {
+   "symbol": "ZW=F",
+   "name": "Wheat",
+   "group": "Global agri",
+   "unit": "USc/bu",
+   "source": "CBOT",
+   "price": 556.0,
+   "date": "2026-08-21",
+   "stale_days": 0,
+   "history": 400
+  },
+  {
+   "symbol": "ZR=F",
+   "name": "Rough Rice",
+   "group": "Global agri",
+   "unit": "USD/cwt",
+   "source": "CBOT",
+   "price": 13.85,
+   "date": "2026-08-21",
+   "stale_days": 0,
+   "history": 400
+  },
+  {
+   "symbol": "SB=F",
+   "name": "Sugar No.11",
+   "group": "Global agri",
+   "unit": "USc/lb",
+   "source": "ICE",
+   "price": 17.2,
+   "date": "2026-08-21",
+   "stale_days": 0,
+   "history": 400
+  },
+  {
+   "symbol": "ZS=F",
+   "name": "Soybeans",
+   "group": "Global agri",
+   "unit": "USc/bu",
+   "source": "CBOT",
+   "price": 1042.0,
+   "date": "2026-08-21",
+   "stale_days": 0,
+   "history": 400
+  },
+  {
+   "symbol": "KC=F",
+   "name": "Coffee C",
+   "group": "Global agri",
+   "unit": "USc/lb",
+   "source": "ICE",
+   "price": 298.0,
+   "date": "2026-08-21",
+   "stale_days": 0,
+   "history": 400
+  },
+  {
+   "symbol": "CT=F",
+   "name": "Cotton No.2",
+   "group": "Global agri",
+   "unit": "USc/lb",
+   "source": "ICE",
+   "price": 68.4,
+   "date": "2026-08-21",
+   "stale_days": 0,
+   "history": 400
+  },
+  {
+   "symbol": "AGM-CHILLI",
+   "name": "Chilli (Guntur)",
+   "group": "India agri",
+   "unit": "INR/qtl",
+   "source": "Agmarknet",
+   "price": 18400.0,
+   "date": "2026-08-21",
+   "stale_days": 0,
+   "history": 1
+  },
+  {
+   "symbol": "AGM-TURMERIC",
+   "name": "Turmeric (Nizamabad)",
+   "group": "India agri",
+   "unit": "INR/qtl",
+   "source": "Agmarknet",
+   "price": 14250.0,
+   "date": "2026-08-21",
+   "stale_days": 0,
+   "history": 1
+  },
+  {
+   "symbol": "AGM-COTTON",
+   "name": "Cotton (Adilabad)",
+   "group": "India agri",
+   "unit": "INR/qtl",
+   "source": "Agmarknet",
+   "price": 7650.0,
+   "date": "2026-08-21",
+   "stale_days": 0,
+   "history": 1
+  },
+  {
+   "symbol": "AGM-ONION",
+   "name": "Onion (Kurnool)",
+   "group": "India agri",
+   "unit": "INR/qtl",
+   "source": "Agmarknet",
+   "price": 2180.0,
+   "date": "2026-08-21",
+   "stale_days": 0,
+   "history": 1
+  },
+  {
+   "symbol": "BDI",
+   "name": "Baltic Dry Index",
+   "group": "Freight",
+   "unit": "index",
+   "source": "Baltic Exch \u00b7 manual",
+   "price": 2841.0,
+   "date": "2026-08-21",
+   "stale_days": 0,
+   "history": 1
+  },
+  {
+   "symbol": "WCI",
+   "name": "Drewry WCI 40ft",
+   "group": "Freight",
+   "unit": "USD/FEU",
+   "source": "Drewry \u00b7 manual",
+   "price": 4526.0,
+   "date": "2026-08-21",
+   "stale_days": 0,
+   "history": 1
+  },
+  {
+   "symbol": "INR=X",
+   "name": "USD/INR",
+   "group": "Freight",
+   "unit": "INR",
+   "source": "FX",
+   "price": 87.9,
+   "date": "2026-08-21",
+   "stale_days": 0,
+   "history": 400
+  }
+ ]
+}

@@ -1,0 +1,102 @@
+name: Refresh and deploy
+
+# One workflow does everything on purpose. A commit pushed with the default
+# GITHUB_TOKEN does not trigger other workflows, so a separate "fetch" workflow
+# committing prices would never wake a separate "deploy" workflow, and the site
+# would go stale while the data stayed current.
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    # 09:00 and 18:30 IST, weekdays (cron is UTC)
+    - cron: "30 3 * * 1-5"
+    - cron: "0 13 * * 1-5"
+  workflow_dispatch:
+    inputs:
+      backfill:
+        description: "Replace history with two years of real prices (run once, first)"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: refresh-and-deploy
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+
+      # A plain push is a code change, so it rebuilds from the prices already
+      # committed. Only a scheduled or manual run goes out to the sources.
+      - name: Refresh prices
+        if: github.event_name != 'push'
+        env:
+          DATA_GOV_KEY: ${{ secrets.DATA_GOV_KEY }}
+        run: |
+          if [ "${{ inputs.backfill }}" = "true" ]; then
+            python scripts/fetch_prices.py --backfill | tee run.log
+          else
+            python scripts/fetch_prices.py | tee run.log
+          fi
+
+      - name: Report what landed
+        if: always() && github.event_name != 'push'
+        run: |
+          {
+            echo "### Price refresh"
+            echo '```'
+            cat run.log 2>/dev/null || echo "the fetch step did not produce a log"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Commit refreshed prices
+        if: github.event_name != 'push'
+        run: |
+          rm -f run.log
+          git config user.name "prices-bot"
+          git config user.email "actions@github.com"
+          git add data/
+          if git diff --staged --quiet; then
+            echo "No price change to commit."
+          else
+            git commit -m "prices: $(date -u +'%Y-%m-%d %H:%M') UTC"
+            git push
+          fi
+
+      - run: npm ci
+      - run: npm run test
+      - name: Publish the static API
+        run: python scripts/publish_api.py
+      - run: npm run build
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

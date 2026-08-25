@@ -1,0 +1,7 @@
+{
+ "_comment": "Values with no free API. Each carries the date it was sourced; the board shows its age. Update by hand.",
+ "LME-NI": {"price": 16707, "date": "2026-08-21", "note": "LME nickel cash, Kitco/Trading Economics"},
+ "LME-ZN": {"price": 3824,  "date": "2026-08-21", "note": "LME zinc 3-month; cash settled higher at ~3980 (backwardation)"},
+ "BDI":    {"price": 2841,  "date": "2026-08-21", "note": "Baltic Dry Index, Baltic Exchange weekly report"},
+ "WCI":    {"price": 4526,  "date": "2026-08-20", "note": "Drewry World Container Index composite, published Thursdays"}
+}
