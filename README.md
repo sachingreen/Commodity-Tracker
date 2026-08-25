@@ -58,7 +58,25 @@ node test/app.test.mjs           # 37 integration tests against the built app
 | Highlights | Rules you set, plus automatic flags for big moves and stale prices |
 | Compare | Up to 8 instruments rebased to 100 on one axis |
 | Correlation | Pearson on daily log returns, over sessions both instruments traded |
+| India basis | Indian mandi prices against world benchmarks, both in USD/tonne |
 | Basket | Weighted custom index, plus volatility and per-leg variance contributions |
+
+**Country markets.** One index per country — India, US, UK, Eurozone, Japan,
+Korea, China, Brazil — rather than an average of several. Blending Sensex and
+Nifty produces a number that matches neither and has to be explained; "India
+today" means one thing to people and that is the Nifty. These are the country
+ETFs, which track those indices and are reachable on a free tier.
+
+**Range position.** Each instrument's detail panel gives its percentile within
+its own history and its drawdown from the peak. A price alone says nothing
+about whether it is dear: 95 dollars a barrel means one thing after a decade at
+60 and another after a year at 130.
+
+**India basis.** Where the board carries both an Indian mandi price and a world
+benchmark for the same crop, the basis tab converts both to USD per tonne and
+shows the gap. Indicative only — the world side is a monthly IMF average, the
+Indian side one day's modal price at one market, and neither carries freight,
+duty or a grade adjustment.
 
 The Macro group is there because commodities do not move in isolation — the
 dollar, real yields and risk appetite drive much of what the rest of the board
@@ -131,8 +149,10 @@ GLD share is roughly a tenth of an ounce, and every one carries roll yield and
 expense drag. Use them for movement, correlation and volatility; use the FRED
 monthly benchmarks for the actual price level.
 
-Ten tickers at two runs a day is 20 calls, inside Alpha Vantage's free tier of
-25 per day. Adding more proxies, or a third daily run, will exceed it — and the
+Eighteen tickers — ten commodity proxies and eight country markets — at one run
+a day is 18 calls, inside Alpha Vantage's free tier of 25 per day. The schedule
+is deliberately once daily rather than twice: these are closing prices, so a
+second run fetches the same numbers and would push the count to 36. Adding more proxies, or a third daily run, will exceed it — and the
 free tier answers a spent quota with HTTP 200 and an explanatory message rather
 than an error code, which is exactly the kind of thing that gets mistaken for
 data. The fetcher checks for it and falls through to Tiingo, whose free tier

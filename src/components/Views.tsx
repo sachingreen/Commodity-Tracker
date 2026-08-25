@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import type { Basket, Board, Group, Highlight, Instrument, Rule, SeriesMap } from "../api/types";
-import { annualVol, change, correlate, basketIndex, basketRisk, periodOffset, project } from "../lib/stats";
+import { annualVol, change, correlate, basketIndex, basketRisk, periodOffset, project, rangePosition } from "../lib/stats";
 import { CONV, exporterStack, importerStack, leaks, perTonne, total,
   type ExporterInputs, type ImporterInputs } from "../lib/ledger";
 import { fmt, heat, pct, tone, uid } from "../lib/format";
@@ -15,7 +15,7 @@ const STALE_AFTER: Record<string, number> = { daily: 4, weekly: 10, monthly: 45 
 const isStale = (i: Instrument) => i.stale_days > (STALE_AFTER[i.freq] ?? 4);
 
 const GROUPS: Group[] = ["Energy", "Crypto", "Base metals", "Precious",
-  "Global agri", "India agri", "Freight", "Proxies", "Macro"];
+  "Markets", "Global agri", "India agri", "Freight", "Proxies", "Macro"];
 
 /* ---------------------------------------------------------------- board */
 
@@ -132,6 +132,7 @@ export function DetailView({ instrument, series }: { instrument: Instrument; ser
   const bands = daily ? project(instrument.price, s, 30) : [];
   const at = (n: number) => bands[n - 1];
   const window = (s?.close ?? []).slice(-(daily ? 252 : 12));
+  const pos = rangePosition(s);
 
   return (
     <div className="panel" style={{ marginTop: 26 }}>
@@ -170,6 +171,20 @@ export function DetailView({ instrument, series }: { instrument: Instrument; ser
         <div className="stat"><dt>{daily ? "52w high / low" : "12m high / low"}</dt>
           <dd>{window.length > 1 ? `${fmt(Math.max(...window))} / ${fmt(Math.min(...window))}` : "—"}</dd></div>
       </dl>
+      {pos && (
+        <div className="leak" style={{ margin: 0, borderTop: "1px solid var(--line)" }}>
+          <h3>
+            {pos.percentile >= 50 ? "Historically expensive" : "Historically cheap"} —
+            {" "}{pos.percentile.toFixed(0)}th percentile
+          </h3>
+          <p>
+            Of the {pos.sessions} observations on record, {pos.percentile.toFixed(0)}% are
+            below today's {fmt(instrument.price)}. It sits {Math.abs(pos.drawdown).toFixed(1)}%
+            {pos.drawdown < -0.05 ? " below" : " from"} its high of {fmt(pos.high)}, against a
+            low of {fmt(pos.low)}. A price alone says nothing about whether it is dear; this does.
+          </p>
+        </div>
+      )}
     </div>
   );
 }

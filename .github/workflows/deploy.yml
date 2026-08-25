@@ -9,8 +9,10 @@ on:
   push:
     branches: [main]
   schedule:
-    # 09:00 and 18:30 IST, weekdays (cron is UTC)
-    - cron: "30 3 * * 1-5"
+    # 18:30 IST on weekdays (cron is UTC). Once a day, not twice: the ETF
+    # rows cost one Alpha Vantage call each and 18 of them fits inside the
+    # free tier's 25 per day, while two runs would not. The evening slot is
+    # the useful one — it lands after the previous US close has settled.
     - cron: "0 13 * * 1-5"
   workflow_dispatch:
     inputs:

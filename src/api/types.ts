@@ -1,6 +1,6 @@
 export type Group =
   | "Energy" | "Crypto" | "Base metals" | "Precious"
-  | "Global agri" | "India agri" | "Freight" | "Proxies" | "Macro";
+  | "Global agri" | "India agri" | "Freight" | "Proxies" | "Macro" | "Markets";
 
 export interface Instrument {
   symbol: string;

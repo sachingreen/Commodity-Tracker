@@ -9,11 +9,13 @@ import { exportAll, importAll, persistent, read, write } from "./lib/storage";
 import {
   BasketView, BoardView, CompareView, CorrelationView, DetailView, HighlightsView, LedgerView,
 } from "./components/Views";
+import { BasisView } from "./components/Basis";
 
-type Tab = "board" | "compare" | "correlation" | "basket" | "ledger" | "highlights";
+type Tab = "board" | "compare" | "correlation" | "basket" | "ledger" | "highlights" | "basis";
 const TABS: { id: Tab; label: string }[] = [
   { id: "board", label: "Board" },
   { id: "highlights", label: "Highlights" },
+  { id: "basis", label: "India basis" },
   { id: "compare", label: "Compare" },
   { id: "correlation", label: "Correlation" },
   { id: "basket", label: "Basket" },
@@ -195,6 +197,20 @@ export default function App() {
             <HighlightsView highlights={highlights} rules={rules} board={board}
               onAdd={(r) => setRules((x) => [...x, r])}
               onRemove={(id) => setRules((x) => x.filter((r) => r.id !== id))} />
+          </section>
+        )}
+
+        {tab === "basis" && (
+          <section>
+            <p className="eyebrow">03 · India basis</p>
+            <h2>What India pays against the world</h2>
+            <p className="lede">
+              The same crop, priced at an Indian mandi and at the world benchmark,
+              both in dollars per tonne. The gap between them is the basis — the
+              reason import and export desks exist, and the one number a price
+              board almost never shows.
+            </p>
+            <BasisView board={board} />
           </section>
         )}
 

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { annualVol, back, basketIndex, basketRisk, change, correlate, drift, logReturns, pearson, periodOffset, project, rebase, sigma } from "./stats";
+import { annualVol, back, basis, basketIndex, basketRisk, change, correlate, drift, logReturns, pearson, periodOffset, project, rangePosition, rebase, sigma } from "./stats";
 import type { Series, SeriesMap } from "../api/types";
 
 const days = (n: number, from = "2026-01-01") => {
@@ -267,5 +267,54 @@ describe("basketRisk", () => {
   it("returns null when the shared window is too short to estimate", () => {
     const s = { A: daily(40, 7), B: { dates: ["x", "y"], close: [1, 2] } };
     expect(basketRisk([{ symbol: "A", weight: 1 }, { symbol: "B", weight: 1 }], s, F)).toBeNull();
+  });
+});
+
+describe("rangePosition", () => {
+  const s = (vals: number[]) => ({ dates: vals.map((_, i) => `d${i}`), close: vals });
+
+  it("puts a new high at the top of the range", () => {
+    const r = rangePosition(s([...Array(20).keys()].map((i) => 100 + i))!)!;
+    expect(r.percentile).toBeCloseTo(100, 6);
+    expect(r.drawdown).toBeCloseTo(0, 6);
+  });
+
+  it("puts a new low at the bottom", () => {
+    const r = rangePosition(s([...Array(20).keys()].map((i) => 200 - i)))!;
+    expect(r.percentile).toBeCloseTo(0, 6);
+    expect(r.drawdown).toBeLessThan(-8);
+  });
+
+  it("measures drawdown from the peak, not the start", () => {
+    const r = rangePosition(s([100, 150, 200, 120, ...Array(12).fill(120)]))!;
+    expect(r.drawdown).toBeCloseTo(-40, 6);
+  });
+
+  it("refuses to rank a series too short to mean anything", () => {
+    expect(rangePosition(s([1, 2, 3]))).toBeNull();
+  });
+});
+
+describe("basis", () => {
+  it("converts a mandi quintal price to USD per tonne", () => {
+    // 2,650 INR/qtl → 26,500 INR/t → /88 ≈ 301 USD/t against a 260 world price
+    const b = basis(2650, "2026-08-25", 260, "2026-07-01", 1, 88)!;
+    expect(b.indiaUsdPerTonne).toBeCloseTo(26500 / 88, 4);
+    expect(b.premium).toBeCloseTo((26500 / 88 / 260 - 1) * 100, 4);
+  });
+
+  it("applies the world unit conversion", () => {
+    // cotton is quoted in US cents per pound
+    const b = basis(7650, "d", 88.8, "d", 22.0462, 88)!;
+    expect(b.worldUsdPerTonne).toBeCloseTo(88.8 * 22.0462, 4);
+  });
+
+  it("returns null when either side is missing", () => {
+    expect(basis(null, "d", 260, "d", 1, 88)).toBeNull();
+    expect(basis(2650, "d", null, "d", 1, 88)).toBeNull();
+  });
+
+  it("returns null on a nonsense exchange rate", () => {
+    expect(basis(2650, "d", 260, "d", 1, 0)).toBeNull();
   });
 });

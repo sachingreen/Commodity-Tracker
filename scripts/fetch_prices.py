@@ -107,6 +107,36 @@ SOURCES = {
     "AGM-POTATO":    ("mandi", "Potato|Agra|Uttar Pradesh", "Potato (Agra)", "India agri", "INR/qtl", "daily", "Agmarknet"),
     "AGM-TOMATO":    ("mandi", "Tomato|Kolar|Karnataka", "Tomato (Kolar)", "India agri", "INR/qtl", "daily", "Agmarknet"),
 
+    # --- Alpha Vantage, daily ETF proxies ----------------------------------
+    # Free daily feeds for the actual metal and grain contracts do not exist
+    # without paying. These ETFs track their underlying closely enough to be
+    # useful for movement, are priced per share rather than per tonne, and
+    # never feed the landed-cost ledger.
+    "P-GOLD":   ("alpha", "GLD", "Gold (GLD)", "Proxies", "USD/share", "daily", "Alpha Vantage \u00b7 proxy"),
+    "P-SILVER": ("alpha", "SLV", "Silver (SLV)", "Proxies", "USD/share", "daily", "Alpha Vantage \u00b7 proxy"),
+    "P-COPPER": ("alpha", "CPER", "Copper (CPER)", "Proxies", "USD/share", "daily", "Alpha Vantage \u00b7 proxy"),
+    "P-WHEAT":  ("alpha", "WEAT", "Wheat (WEAT)", "Proxies", "USD/share", "daily", "Alpha Vantage \u00b7 proxy"),
+    "P-CORN":   ("alpha", "CORN", "Corn (CORN)", "Proxies", "USD/share", "daily", "Alpha Vantage \u00b7 proxy"),
+    "P-SUGAR":  ("alpha", "CANE", "Sugar (CANE)", "Proxies", "USD/share", "daily", "Alpha Vantage \u00b7 proxy"),
+    "P-COFFEE": ("alpha", "JO", "Coffee (JO)", "Proxies", "USD/share", "daily", "Alpha Vantage \u00b7 proxy"),
+    "P-SOY":    ("alpha", "SOYB", "Soybeans (SOYB)", "Proxies", "USD/share", "daily", "Alpha Vantage \u00b7 proxy"),
+    "P-METALS": ("alpha", "DBB", "Base metals (DBB)", "Proxies", "USD/share", "daily", "Alpha Vantage \u00b7 proxy"),
+    "P-OIL":    ("alpha", "USO", "Crude (USO)", "Proxies", "USD/share", "daily", "Alpha Vantage \u00b7 proxy"),
+
+    # --- Country equity markets, one index each ----------------------------
+    # One index per country rather than an average of several: Nifty is what
+    # people mean by "India today", and blending it with the Sensex produces a
+    # number that matches neither and has to be explained. These are the
+    # country ETFs, which track those indices and are reachable on a free tier.
+    "MKT-IN": ("alpha", "INDA", "India", "Markets", "USD/share", "daily", "MSCI India ETF"),
+    "MKT-US": ("alpha", "SPY", "United States", "Markets", "USD/share", "daily", "S&P 500 ETF"),
+    "MKT-UK": ("alpha", "EWU", "United Kingdom", "Markets", "USD/share", "daily", "MSCI UK ETF"),
+    "MKT-EU": ("alpha", "EZU", "Eurozone", "Markets", "USD/share", "daily", "MSCI EMU ETF"),
+    "MKT-JP": ("alpha", "EWJ", "Japan", "Markets", "USD/share", "daily", "MSCI Japan ETF"),
+    "MKT-KR": ("alpha", "EWY", "South Korea", "Markets", "USD/share", "daily", "MSCI Korea ETF"),
+    "MKT-CN": ("alpha", "MCHI", "China", "Markets", "USD/share", "daily", "MSCI China ETF"),
+    "MKT-BR": ("alpha", "EWZ", "Brazil", "Markets", "USD/share", "daily", "MSCI Brazil ETF"),
+
     # --- hand-maintained, no free feed exists ------------------------------
     "BDI": ("manual", "", "Baltic Dry Index", "Freight", "index", "daily", "Baltic Exch · manual"),
     "WCI": ("manual", "", "Drewry WCI 40ft", "Freight", "USD/FEU", "weekly", "Drewry · manual"),
@@ -136,6 +166,9 @@ SANE = {
     "P-WHEAT": (1, 100), "P-CORN": (1, 100), "P-SUGAR": (1, 100),
     "P-COFFEE": (1, 300), "P-SOY": (1, 100), "P-METALS": (2, 200),
     "P-OIL": (5, 300),
+    "MKT-IN": (5, 500), "MKT-US": (50, 5000), "MKT-UK": (5, 500),
+    "MKT-EU": (5, 500), "MKT-JP": (5, 500), "MKT-KR": (5, 500),
+    "MKT-CN": (5, 500), "MKT-BR": (2, 500),
 }
 
 
@@ -363,52 +396,48 @@ def fetch_tiingo(ticker, backfill):
     return sorted(out), ("ok" if out else "no closes in response")
 
 
-# One response per state, reused across every mandi row in that state.
-_MANDI_CACHE: dict = {}
-
-
-def load_mandi_state(state, key):
-    """Fetch every reported price for one state, once.
-
-    Fourteen individually filtered calls to api.data.gov.in cost fourteen
-    connections to a host that regularly takes 15 seconds to answer from CI —
-    enough on its own to exhaust the run's time budget. One call per state
-    returns the same information for a fraction of the wait.
-    """
-    if state in _MANDI_CACHE:
-        return _MANDI_CACHE[state]
-    q = urllib.parse.urlencode({
-        "api-key": key, "format": "json", "limit": 2000,
-        "filters[state]": state,
-    })
-    body = get("https://api.data.gov.in/resource/"
-               "9ef84268-d588-465a-a308-a864a43d0070?" + q, timeout=60)
-    index = {}
-    if body and not body.startswith("__"):
-        try:
-            for r in json.loads(body).get("records", []):
-                index[(str(r.get("commodity", "")).strip().lower(),
-                       str(r.get("market", "")).strip().lower())] = r
-        except Exception:
-            pass
-    _MANDI_CACHE[state] = (index, body if not index else "ok")
-    return _MANDI_CACHE[state]
-
-
 def fetch_mandi(spec, key):
+    """One precisely filtered request per row.
+
+    An earlier version fetched a whole state at once to save connections, but
+    the endpoint caps a response at a couple of thousand records and a large
+    state reports far more than that — the market we wanted fell outside the
+    window and every row reported "no arrivals" while the data was there.
+    Filtering server-side returns a handful of records and is exact.
+    """
     if not key:
         return [], "no DATA_GOV_KEY set"
     commodity, market, state = spec.split("|")
-    index, status = load_mandi_state(state, key)
-    if not index:
-        return [], (status if isinstance(status, str) and status.startswith("__")
-                    else f"no records returned for {state}")
 
-    r = index.get((commodity.strip().lower(), market.strip().lower()))
-    if not r:
-        # normal: Agmarknet lists only markets that traded, and a mandi is
-        # closed on holidays and between harvests
-        return [], f"no arrivals for {commodity} at {market} today"
+    def query(**extra):
+        q = urllib.parse.urlencode({
+            "api-key": key, "format": "json", "limit": 50,
+            "filters[state]": state, **extra})
+        body = get("https://api.data.gov.in/resource/"
+                   "9ef84268-d588-465a-a308-a864a43d0070?" + q, timeout=45)
+        if not body or body.startswith("__"):
+            return None, (body or "no response")
+        try:
+            return json.loads(body).get("records", []), "ok"
+        except Exception:
+            return None, "unexpected response shape"
+
+    recs, why = query(**{"filters[commodity]": commodity,
+                         "filters[market]": market})
+    if recs is None:
+        return [], why
+
+    if not recs:
+        # Distinguish "the market is closed" from "I have the name wrong" —
+        # ask what this commodity did report today and name a few markets.
+        alt, _ = query(**{"filters[commodity]": commodity})
+        if alt:
+            seen = sorted({str(r.get("market", "")).strip() for r in alt})[:4]
+            return [], (f"{commodity} traded today at {', '.join(seen)} "
+                        f"but not {market} — check the market name")
+        return [], f"no arrivals for {commodity} in {state} today"
+
+    r = recs[0]
     try:
         px = float(str(r.get("modal_price", "")).replace(",", ""))
     except ValueError:

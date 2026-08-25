@@ -307,3 +307,79 @@ export function basketRisk(
     skipped,
   };
 }
+
+/* ------------------------------------------------------- range position --- */
+
+export interface RangePosition {
+  /** Where the latest price sits in its own history, 0–100. */
+  percentile: number;
+  /** Percent below the highest price in the window. Zero at a new high. */
+  drawdown: number;
+  high: number;
+  low: number;
+  /** Observations the ranking rests on. */
+  sessions: number;
+}
+
+/**
+ * Where a price sits within its own history.
+ *
+ * A price on its own says nothing about whether it is high or low — 95 dollars
+ * a barrel means one thing after a decade at 60 and another after a year at
+ * 130. Percentile answers that; drawdown says how far off the peak.
+ *
+ * Works on any frequency: a monthly series ranks against monthly observations,
+ * which is a fair comparison, unlike volatility.
+ */
+export function rangePosition(series: Series | undefined, window = 0): RangePosition | null {
+  const all = series?.close ?? [];
+  const c = (window > 0 ? all.slice(-window) : all).filter((v) => v > 0);
+  if (c.length < 12) return null;
+  const now = c[c.length - 1];
+  const high = Math.max(...c), low = Math.min(...c);
+  const below = c.filter((v) => v < now).length;
+  return {
+    percentile: (below / (c.length - 1)) * 100,
+    drawdown: high > 0 ? (now / high - 1) * 100 : 0,
+    high, low, sessions: c.length,
+  };
+}
+
+/* ---------------------------------------------------------------- basis --- */
+
+export interface Basis {
+  /** Indian mandi price expressed in USD per tonne. */
+  indiaUsdPerTonne: number;
+  /** World benchmark in USD per tonne. */
+  worldUsdPerTonne: number;
+  /** India relative to the world, in percent. Positive means dearer. */
+  premium: number;
+  indiaDate: string;
+  worldDate: string;
+}
+
+/**
+ * The gap between an Indian mandi price and the world benchmark for the same
+ * crop, both in USD per tonne.
+ *
+ * Indicative only, and deliberately so: the world side is a monthly IMF
+ * average while the mandi side is a single day's modal price at one market,
+ * and neither carries freight, duty or quality adjustment. It shows the shape
+ * of the spread, not a tradeable number.
+ */
+export function basis(
+  indiaPrice: number | null, indiaDate: string,
+  worldPrice: number | null, worldDate: string,
+  worldToTonne: number, usdInr: number,
+): Basis | null {
+  if (indiaPrice == null || worldPrice == null || !(usdInr > 0)) return null;
+  const india = (indiaPrice * 10) / usdInr;          // INR/quintal → USD/tonne
+  const world = worldPrice * worldToTonne;
+  if (!(india > 0) || !(world > 0)) return null;
+  return {
+    indiaUsdPerTonne: india,
+    worldUsdPerTonne: world,
+    premium: (india / world - 1) * 100,
+    indiaDate, worldDate,
+  };
+}
