@@ -1,6 +1,6 @@
 {
  "seed": false,
- "asof": "2026-09-04",
+ "asof": "2026-09-07",
  "instruments": [
   {
    "symbol": "BZ=F",
@@ -11,7 +11,7 @@
    "freq": "daily",
    "price": 96.02,
    "date": "2026-09-01",
-   "stale_days": 3,
+   "stale_days": 6,
    "history": 880
   },
   {
@@ -23,7 +23,7 @@
    "freq": "daily",
    "price": 91.48,
    "date": "2026-09-01",
-   "stale_days": 3,
+   "stale_days": 6,
    "history": 869
   },
   {
@@ -35,7 +35,7 @@
    "freq": "daily",
    "price": 2.9,
    "date": "2026-09-01",
-   "stale_days": 3,
+   "stale_days": 6,
    "history": 870
   },
   {
@@ -47,7 +47,7 @@
    "freq": "daily",
    "price": 95.38,
    "date": "2026-08-28",
-   "stale_days": 7,
+   "stale_days": 10,
    "history": 869
   },
   {
@@ -57,10 +57,10 @@
    "unit": "USD",
    "source": "Coinbase",
    "freq": "daily",
-   "price": 79817.93,
-   "date": "2026-09-04",
+   "price": 79185.9,
+   "date": "2026-09-07",
    "stale_days": 0,
-   "history": 359
+   "history": 362
   },
   {
    "symbol": "ETH-USD",
@@ -69,10 +69,10 @@
    "unit": "USD",
    "source": "Coinbase",
    "freq": "daily",
-   "price": 2460.14,
-   "date": "2026-09-04",
+   "price": 2495.36,
+   "date": "2026-09-07",
    "stale_days": 0,
-   "history": 359
+   "history": 362
   },
   {
    "symbol": "SOL-USD",
@@ -81,10 +81,10 @@
    "unit": "USD",
    "source": "Coinbase",
    "freq": "daily",
-   "price": 101.89,
-   "date": "2026-09-04",
+   "price": 104.0,
+   "date": "2026-09-07",
    "stale_days": 0,
-   "history": 359
+   "history": 362
   },
   {
    "symbol": "VIX",
@@ -95,7 +95,7 @@
    "freq": "daily",
    "price": 14.32,
    "date": "2026-09-03",
-   "stale_days": 1,
+   "stale_days": 4,
    "history": 897
   },
   {
@@ -105,10 +105,10 @@
    "unit": "%",
    "source": "Treasury via FRED",
    "freq": "daily",
-   "price": 4.79,
-   "date": "2026-09-02",
-   "stale_days": 2,
-   "history": 870
+   "price": 4.77,
+   "date": "2026-09-03",
+   "stale_days": 4,
+   "history": 871
   },
   {
    "symbol": "DXY",
@@ -119,7 +119,7 @@
    "freq": "daily",
    "price": 118.7479,
    "date": "2026-08-28",
-   "stale_days": 7,
+   "stale_days": 10,
    "history": 869
   },
   {
@@ -131,7 +131,7 @@
    "freq": "daily",
    "price": 1.1598,
    "date": "2026-08-28",
-   "stale_days": 7,
+   "stale_days": 10,
    "history": 869
   },
   {
@@ -143,7 +143,7 @@
    "freq": "monthly",
    "price": 13542.8209,
    "date": "2026-07-01",
-   "stale_days": 65,
+   "stale_days": 68,
    "history": 327
   },
   {
@@ -155,7 +155,7 @@
    "freq": "monthly",
    "price": 3158.265,
    "date": "2026-07-01",
-   "stale_days": 65,
+   "stale_days": 68,
    "history": 415
   },
   {
@@ -167,7 +167,7 @@
    "freq": "monthly",
    "price": 16632.3614,
    "date": "2026-07-01",
-   "stale_days": 65,
+   "stale_days": 68,
    "history": 401
   },
   {
@@ -179,7 +179,7 @@
    "freq": "monthly",
    "price": 3593.775,
    "date": "2026-07-01",
-   "stale_days": 65,
+   "stale_days": 68,
    "history": 395
   },
   {
@@ -191,7 +191,7 @@
    "freq": "monthly",
    "price": 101.5957,
    "date": "2026-07-01",
-   "stale_days": 65,
+   "stale_days": 68,
    "history": 259
   },
   {
@@ -203,7 +203,7 @@
    "freq": "monthly",
    "price": 228.7388,
    "date": "2026-07-01",
-   "stale_days": 65,
+   "stale_days": 68,
    "history": 415
   },
   {
@@ -215,7 +215,7 @@
    "freq": "monthly",
    "price": 213.1902,
    "date": "2026-07-01",
-   "stale_days": 65,
+   "stale_days": 68,
    "history": 415
   },
   {
@@ -227,7 +227,7 @@
    "freq": "monthly",
    "price": 464.0,
    "date": "2026-07-01",
-   "stale_days": 65,
+   "stale_days": 68,
    "history": 195
   },
   {
@@ -239,7 +239,7 @@
    "freq": "monthly",
    "price": 14.8123,
    "date": "2026-07-01",
-   "stale_days": 65,
+   "stale_days": 68,
    "history": 415
   },
   {
@@ -251,7 +251,7 @@
    "freq": "monthly",
    "price": 442.4506,
    "date": "2026-07-01",
-   "stale_days": 65,
+   "stale_days": 68,
    "history": 365
   },
   {
@@ -263,7 +263,7 @@
    "freq": "monthly",
    "price": 359.1623,
    "date": "2026-07-01",
-   "stale_days": 65,
+   "stale_days": 68,
    "history": 415
   },
   {
@@ -275,7 +275,7 @@
    "freq": "monthly",
    "price": 88.775,
    "date": "2026-07-01",
-   "stale_days": 65,
+   "stale_days": 68,
    "history": 415
   },
   {
@@ -287,7 +287,7 @@
    "freq": "daily",
    "price": 18400.0,
    "date": "2026-08-21",
-   "stale_days": 14,
+   "stale_days": 17,
    "history": 1
   },
   {
@@ -297,10 +297,10 @@
    "unit": "INR/qtl",
    "source": "Agmarknet",
    "freq": "daily",
-   "price": 16250.0,
-   "date": "2026-09-02",
-   "stale_days": 2,
-   "history": 5
+   "price": 14500.0,
+   "date": "2026-09-07",
+   "stale_days": 0,
+   "history": 6
   },
   {
    "symbol": "AGM-COTTON",
@@ -310,9 +310,9 @@
    "source": "Agmarknet",
    "freq": "daily",
    "price": 8000.0,
-   "date": "2026-09-02",
-   "stale_days": 2,
-   "history": 7
+   "date": "2026-09-07",
+   "stale_days": 0,
+   "history": 8
   },
   {
    "symbol": "AGM-ONION",
@@ -321,10 +321,10 @@
    "unit": "INR/qtl",
    "source": "Agmarknet",
    "freq": "daily",
-   "price": 3760.0,
-   "date": "2026-09-02",
-   "stale_days": 2,
-   "history": 7
+   "price": 4739.0,
+   "date": "2026-09-07",
+   "stale_days": 0,
+   "history": 8
   },
   {
    "symbol": "AGM-SOYBEAN",
@@ -333,10 +333,10 @@
    "unit": "INR/qtl",
    "source": "Agmarknet",
    "freq": "daily",
-   "price": 6500.0,
-   "date": "2026-09-04",
+   "price": 5930.0,
+   "date": "2026-09-07",
    "stale_days": 0,
-   "history": 7
+   "history": 8
   },
   {
    "symbol": "AGM-GROUNDNUT",
@@ -345,10 +345,10 @@
    "unit": "INR/qtl",
    "source": "Agmarknet",
    "freq": "daily",
-   "price": 7250.0,
-   "date": "2026-08-31",
-   "stale_days": 4,
-   "history": 3
+   "price": 7275.0,
+   "date": "2026-09-07",
+   "stale_days": 0,
+   "history": 4
   },
   {
    "symbol": "AGM-CUMIN",
@@ -357,10 +357,10 @@
    "unit": "INR/qtl",
    "source": "Agmarknet",
    "freq": "daily",
-   "price": 20000.0,
-   "date": "2026-09-03",
-   "stale_days": 1,
-   "history": 6
+   "price": 20250.0,
+   "date": "2026-09-07",
+   "stale_days": 0,
+   "history": 7
   },
   {
    "symbol": "AGM-TUR",
@@ -369,10 +369,10 @@
    "unit": "INR/qtl",
    "source": "Agmarknet",
    "freq": "daily",
-   "price": 8410.0,
-   "date": "2026-09-02",
-   "stale_days": 2,
-   "history": 5
+   "price": 9050.0,
+   "date": "2026-09-07",
+   "stale_days": 0,
+   "history": 6
   },
   {
    "symbol": "AGM-POTATO",
@@ -381,10 +381,10 @@
    "unit": "INR/qtl",
    "source": "Agmarknet",
    "freq": "daily",
-   "price": 521.14,
-   "date": "2026-09-04",
+   "price": 565.71,
+   "date": "2026-09-07",
    "stale_days": 0,
-   "history": 8
+   "history": 9
   },
   {
    "symbol": "AGM-TOMATO",
@@ -395,7 +395,7 @@
    "freq": "daily",
    "price": 1000.0,
    "date": "2026-08-25",
-   "stale_days": 10,
+   "stale_days": 13,
    "history": 1
   },
   {
@@ -405,10 +405,10 @@
    "unit": "USD/share",
    "source": "Alpha Vantage \u00b7 proxy",
    "freq": "daily",
-   "price": 410.22,
-   "date": "2026-09-03",
-   "stale_days": 1,
-   "history": 107
+   "price": 406.77,
+   "date": "2026-09-04",
+   "stale_days": 3,
+   "history": 108
   },
   {
    "symbol": "P-SILVER",
@@ -417,10 +417,10 @@
    "unit": "USD/share",
    "source": "Alpha Vantage \u00b7 proxy",
    "freq": "daily",
-   "price": 60.55,
-   "date": "2026-09-03",
-   "stale_days": 1,
-   "history": 107
+   "price": 59.82,
+   "date": "2026-09-04",
+   "stale_days": 3,
+   "history": 108
   },
   {
    "symbol": "P-COPPER",
@@ -429,10 +429,10 @@
    "unit": "USD/share",
    "source": "Alpha Vantage \u00b7 proxy",
    "freq": "daily",
-   "price": 39.91,
-   "date": "2026-09-03",
-   "stale_days": 1,
-   "history": 107
+   "price": 39.95,
+   "date": "2026-09-04",
+   "stale_days": 3,
+   "history": 108
   },
   {
    "symbol": "P-WHEAT",
@@ -441,10 +441,10 @@
    "unit": "USD/share",
    "source": "Alpha Vantage \u00b7 proxy",
    "freq": "daily",
-   "price": 27.12,
-   "date": "2026-09-03",
-   "stale_days": 1,
-   "history": 107
+   "price": 26.49,
+   "date": "2026-09-04",
+   "stale_days": 3,
+   "history": 108
   },
   {
    "symbol": "P-CORN",
@@ -453,10 +453,10 @@
    "unit": "USD/share",
    "source": "Alpha Vantage \u00b7 proxy",
    "freq": "daily",
-   "price": 20.17,
-   "date": "2026-09-03",
-   "stale_days": 1,
-   "history": 107
+   "price": 20.07,
+   "date": "2026-09-04",
+   "stale_days": 3,
+   "history": 108
   },
   {
    "symbol": "P-SUGAR",
@@ -465,10 +465,10 @@
    "unit": "USD/share",
    "source": "Alpha Vantage \u00b7 proxy",
    "freq": "daily",
-   "price": 11.39,
-   "date": "2026-09-03",
-   "stale_days": 1,
-   "history": 107
+   "price": 11.42,
+   "date": "2026-09-04",
+   "stale_days": 3,
+   "history": 108
   },
   {
    "symbol": "P-COFFEE",
@@ -479,7 +479,7 @@
    "freq": "daily",
    "price": 54.0,
    "date": "2023-06-14",
-   "stale_days": 1178,
+   "stale_days": 1181,
    "history": 100
   },
   {
@@ -489,10 +489,10 @@
    "unit": "USD/share",
    "source": "Alpha Vantage \u00b7 proxy",
    "freq": "daily",
-   "price": 27.79,
-   "date": "2026-09-03",
-   "stale_days": 1,
-   "history": 107
+   "price": 27.65,
+   "date": "2026-09-04",
+   "stale_days": 3,
+   "history": 108
   },
   {
    "symbol": "P-METALS",
@@ -501,10 +501,10 @@
    "unit": "USD/share",
    "source": "Alpha Vantage \u00b7 proxy",
    "freq": "daily",
-   "price": 25.79,
-   "date": "2026-09-03",
-   "stale_days": 1,
-   "history": 107
+   "price": 25.75,
+   "date": "2026-09-04",
+   "stale_days": 3,
+   "history": 108
   },
   {
    "symbol": "P-OIL",
@@ -513,10 +513,10 @@
    "unit": "USD/share",
    "source": "Alpha Vantage \u00b7 proxy",
    "freq": "daily",
-   "price": 142.09,
-   "date": "2026-09-03",
-   "stale_days": 1,
-   "history": 107
+   "price": 141.96,
+   "date": "2026-09-04",
+   "stale_days": 3,
+   "history": 108
   },
   {
    "symbol": "MKT-IN",
@@ -525,10 +525,10 @@
    "unit": "USD/share",
    "source": "MSCI India ETF",
    "freq": "daily",
-   "price": 49.92,
-   "date": "2026-09-03",
-   "stale_days": 1,
-   "history": 107
+   "price": 49.91,
+   "date": "2026-09-04",
+   "stale_days": 3,
+   "history": 108
   },
   {
    "symbol": "MKT-US",
@@ -537,10 +537,10 @@
    "unit": "USD/share",
    "source": "S&P 500 ETF",
    "freq": "daily",
-   "price": 773.17,
-   "date": "2026-09-03",
-   "stale_days": 1,
-   "history": 107
+   "price": 770.19,
+   "date": "2026-09-04",
+   "stale_days": 3,
+   "history": 108
   },
   {
    "symbol": "MKT-UK",
@@ -549,10 +549,10 @@
    "unit": "USD/share",
    "source": "MSCI UK ETF",
    "freq": "daily",
-   "price": 48.68,
-   "date": "2026-09-03",
-   "stale_days": 1,
-   "history": 107
+   "price": 48.59,
+   "date": "2026-09-04",
+   "stale_days": 3,
+   "history": 108
   },
   {
    "symbol": "MKT-EU",
@@ -561,10 +561,10 @@
    "unit": "USD/share",
    "source": "MSCI EMU ETF",
    "freq": "daily",
-   "price": 70.28,
-   "date": "2026-09-03",
-   "stale_days": 1,
-   "history": 107
+   "price": 70.46,
+   "date": "2026-09-04",
+   "stale_days": 3,
+   "history": 108
   },
   {
    "symbol": "MKT-JP",
@@ -573,10 +573,10 @@
    "unit": "USD/share",
    "source": "MSCI Japan ETF",
    "freq": "daily",
-   "price": 97.9,
-   "date": "2026-09-03",
-   "stale_days": 1,
-   "history": 107
+   "price": 98.28,
+   "date": "2026-09-04",
+   "stale_days": 3,
+   "history": 108
   },
   {
    "symbol": "MKT-KR",
@@ -585,10 +585,10 @@
    "unit": "USD/share",
    "source": "MSCI Korea ETF",
    "freq": "daily",
-   "price": 180.56,
-   "date": "2026-09-03",
-   "stale_days": 1,
-   "history": 107
+   "price": 188.87,
+   "date": "2026-09-04",
+   "stale_days": 3,
+   "history": 108
   },
   {
    "symbol": "MKT-CN",
@@ -597,10 +597,10 @@
    "unit": "USD/share",
    "source": "MSCI China ETF",
    "freq": "daily",
-   "price": 54.37,
-   "date": "2026-09-03",
-   "stale_days": 1,
-   "history": 107
+   "price": 54.91,
+   "date": "2026-09-04",
+   "stale_days": 3,
+   "history": 108
   },
   {
    "symbol": "MKT-BR",
@@ -609,10 +609,10 @@
    "unit": "USD/share",
    "source": "MSCI Brazil ETF",
    "freq": "daily",
-   "price": 38.13,
-   "date": "2026-09-03",
-   "stale_days": 1,
-   "history": 107
+   "price": 37.86,
+   "date": "2026-09-04",
+   "stale_days": 3,
+   "history": 108
   },
   {
    "symbol": "BDI",
@@ -623,7 +623,7 @@
    "freq": "daily",
    "price": 2841,
    "date": "2026-08-21",
-   "stale_days": 14,
+   "stale_days": 17,
    "history": 1
   },
   {
@@ -635,7 +635,7 @@
    "freq": "weekly",
    "price": 4526,
    "date": "2026-08-20",
-   "stale_days": 15,
+   "stale_days": 18,
    "history": 1
   }
  ]
