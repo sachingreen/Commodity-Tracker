@@ -1,6 +1,6 @@
 {
  "seed": false,
- "asof": "2026-10-26",
+ "asof": "2026-10-27",
  "instruments": [
   {
    "symbol": "BZ=F",
@@ -11,7 +11,7 @@
    "freq": "daily",
    "price": 115.22,
    "date": "2026-10-20",
-   "stale_days": 6,
+   "stale_days": 7,
    "history": 900
   },
   {
@@ -23,7 +23,7 @@
    "freq": "daily",
    "price": 107.89,
    "date": "2026-10-20",
-   "stale_days": 6,
+   "stale_days": 7,
    "history": 900
   },
   {
@@ -35,7 +35,7 @@
    "freq": "daily",
    "price": 3.1,
    "date": "2026-10-20",
-   "stale_days": 6,
+   "stale_days": 7,
    "history": 900
   },
   {
@@ -45,9 +45,9 @@
    "unit": "INR",
    "source": "Fed via FRED",
    "freq": "daily",
-   "price": 94.96,
-   "date": "2026-10-16",
-   "stale_days": 10,
+   "price": 94.94,
+   "date": "2026-10-23",
+   "stale_days": 4,
    "history": 900
   },
   {
@@ -57,10 +57,10 @@
    "unit": "USD",
    "source": "Coinbase",
    "freq": "daily",
-   "price": 79907.24,
-   "date": "2026-10-26",
+   "price": 80472.2,
+   "date": "2026-10-27",
    "stale_days": 0,
-   "history": 411
+   "history": 412
   },
   {
    "symbol": "ETH-USD",
@@ -69,10 +69,10 @@
    "unit": "USD",
    "source": "Coinbase",
    "freq": "daily",
-   "price": 2312.56,
-   "date": "2026-10-26",
+   "price": 2342.74,
+   "date": "2026-10-27",
    "stale_days": 0,
-   "history": 411
+   "history": 412
   },
   {
    "symbol": "SOL-USD",
@@ -81,10 +81,10 @@
    "unit": "USD",
    "source": "Coinbase",
    "freq": "daily",
-   "price": 100.33,
-   "date": "2026-10-26",
+   "price": 100.87,
+   "date": "2026-10-27",
    "stale_days": 0,
-   "history": 411
+   "history": 412
   },
   {
    "symbol": "VIX",
@@ -93,9 +93,9 @@
    "unit": "index",
    "source": "CBOE via FRED",
    "freq": "daily",
-   "price": 19.45,
-   "date": "2026-10-23",
-   "stale_days": 3,
+   "price": 18.39,
+   "date": "2026-10-26",
+   "stale_days": 1,
    "history": 900
   },
   {
@@ -105,8 +105,8 @@
    "unit": "%",
    "source": "Treasury via FRED",
    "freq": "daily",
-   "price": 4.96,
-   "date": "2026-10-22",
+   "price": 5.0,
+   "date": "2026-10-23",
    "stale_days": 4,
    "history": 900
   },
@@ -117,9 +117,9 @@
    "unit": "index",
    "source": "Fed via FRED",
    "freq": "daily",
-   "price": 121.4048,
-   "date": "2026-10-16",
-   "stale_days": 10,
+   "price": 121.3202,
+   "date": "2026-10-23",
+   "stale_days": 4,
    "history": 900
   },
   {
@@ -129,9 +129,9 @@
    "unit": "USD",
    "source": "Fed via FRED",
    "freq": "daily",
-   "price": 1.1231,
-   "date": "2026-10-16",
-   "stale_days": 10,
+   "price": 1.1199,
+   "date": "2026-10-23",
+   "stale_days": 4,
    "history": 900
   },
   {
@@ -143,7 +143,7 @@
    "freq": "monthly",
    "price": 14473.0559,
    "date": "2026-09-01",
-   "stale_days": 55,
+   "stale_days": 56,
    "history": 329
   },
   {
@@ -155,7 +155,7 @@
    "freq": "monthly",
    "price": 3283.0543,
    "date": "2026-09-01",
-   "stale_days": 55,
+   "stale_days": 56,
    "history": 417
   },
   {
@@ -167,7 +167,7 @@
    "freq": "monthly",
    "price": 16323.8219,
    "date": "2026-09-01",
-   "stale_days": 55,
+   "stale_days": 56,
    "history": 403
   },
   {
@@ -179,7 +179,7 @@
    "freq": "monthly",
    "price": 4020.549,
    "date": "2026-09-01",
-   "stale_days": 55,
+   "stale_days": 56,
    "history": 397
   },
   {
@@ -191,7 +191,7 @@
    "freq": "monthly",
    "price": 100.4409,
    "date": "2026-09-01",
-   "stale_days": 55,
+   "stale_days": 56,
    "history": 261
   },
   {
@@ -203,7 +203,7 @@
    "freq": "monthly",
    "price": 246.8518,
    "date": "2026-09-01",
-   "stale_days": 55,
+   "stale_days": 56,
    "history": 417
   },
   {
@@ -215,7 +215,7 @@
    "freq": "monthly",
    "price": 236.9161,
    "date": "2026-09-01",
-   "stale_days": 55,
+   "stale_days": 56,
    "history": 417
   },
   {
@@ -227,7 +227,7 @@
    "freq": "monthly",
    "price": 466.4545,
    "date": "2026-09-01",
-   "stale_days": 55,
+   "stale_days": 56,
    "history": 197
   },
   {
@@ -239,7 +239,7 @@
    "freq": "monthly",
    "price": 17.9371,
    "date": "2026-09-01",
-   "stale_days": 55,
+   "stale_days": 56,
    "history": 417
   },
   {
@@ -251,7 +251,7 @@
    "freq": "monthly",
    "price": 481.7223,
    "date": "2026-09-01",
-   "stale_days": 55,
+   "stale_days": 56,
    "history": 367
   },
   {
@@ -263,7 +263,7 @@
    "freq": "monthly",
    "price": 330.1219,
    "date": "2026-09-01",
-   "stale_days": 55,
+   "stale_days": 56,
    "history": 417
   },
   {
@@ -275,7 +275,7 @@
    "freq": "monthly",
    "price": 95.8405,
    "date": "2026-09-01",
-   "stale_days": 55,
+   "stale_days": 56,
    "history": 417
   },
   {
@@ -287,7 +287,7 @@
    "freq": "daily",
    "price": 18400.0,
    "date": "2026-08-21",
-   "stale_days": 66,
+   "stale_days": 67,
    "history": 1
   },
   {
@@ -299,7 +299,7 @@
    "freq": "daily",
    "price": 15300.0,
    "date": "2026-09-24",
-   "stale_days": 32,
+   "stale_days": 33,
    "history": 14
   },
   {
@@ -311,7 +311,7 @@
    "freq": "daily",
    "price": 8200.0,
    "date": "2026-10-16",
-   "stale_days": 10,
+   "stale_days": 11,
    "history": 17
   },
   {
@@ -323,7 +323,7 @@
    "freq": "daily",
    "price": 3681.0,
    "date": "2026-10-16",
-   "stale_days": 10,
+   "stale_days": 11,
    "history": 19
   },
   {
@@ -335,7 +335,7 @@
    "freq": "daily",
    "price": 2600.0,
    "date": "2026-09-22",
-   "stale_days": 34,
+   "stale_days": 35,
    "history": 1
   },
   {
@@ -347,7 +347,7 @@
    "freq": "daily",
    "price": 6855.0,
    "date": "2026-10-16",
-   "stale_days": 10,
+   "stale_days": 11,
    "history": 21
   },
   {
@@ -359,7 +359,7 @@
    "freq": "daily",
    "price": 8000.0,
    "date": "2026-10-16",
-   "stale_days": 10,
+   "stale_days": 11,
    "history": 17
   },
   {
@@ -371,7 +371,7 @@
    "freq": "daily",
    "price": 20500.0,
    "date": "2026-09-24",
-   "stale_days": 32,
+   "stale_days": 33,
    "history": 17
   },
   {
@@ -383,7 +383,7 @@
    "freq": "daily",
    "price": 10400.0,
    "date": "2026-10-16",
-   "stale_days": 10,
+   "stale_days": 11,
    "history": 14
   },
   {
@@ -395,7 +395,7 @@
    "freq": "daily",
    "price": 568.94,
    "date": "2026-10-16",
-   "stale_days": 10,
+   "stale_days": 11,
    "history": 22
   },
   {
@@ -407,7 +407,7 @@
    "freq": "daily",
    "price": 800.0,
    "date": "2026-10-16",
-   "stale_days": 10,
+   "stale_days": 11,
    "history": 3
   },
   {
@@ -419,7 +419,7 @@
    "freq": "daily",
    "price": 382.71,
    "date": "2026-10-15",
-   "stale_days": 11,
+   "stale_days": 12,
    "history": 132
   },
   {
@@ -431,7 +431,7 @@
    "freq": "daily",
    "price": 51.92,
    "date": "2026-10-15",
-   "stale_days": 11,
+   "stale_days": 12,
    "history": 132
   },
   {
@@ -443,7 +443,7 @@
    "freq": "daily",
    "price": 39.45,
    "date": "2026-10-15",
-   "stale_days": 11,
+   "stale_days": 12,
    "history": 132
   },
   {
@@ -455,7 +455,7 @@
    "freq": "daily",
    "price": 24.28,
    "date": "2026-10-15",
-   "stale_days": 11,
+   "stale_days": 12,
    "history": 132
   },
   {
@@ -467,7 +467,7 @@
    "freq": "daily",
    "price": 18.35,
    "date": "2026-10-15",
-   "stale_days": 11,
+   "stale_days": 12,
    "history": 132
   },
   {
@@ -479,7 +479,7 @@
    "freq": "daily",
    "price": 12.47,
    "date": "2026-10-15",
-   "stale_days": 11,
+   "stale_days": 12,
    "history": 132
   },
   {
@@ -491,7 +491,7 @@
    "freq": "daily",
    "price": 54.0,
    "date": "2023-06-14",
-   "stale_days": 1230,
+   "stale_days": 1231,
    "history": 100
   },
   {
@@ -503,7 +503,7 @@
    "freq": "daily",
    "price": 26.94,
    "date": "2026-10-15",
-   "stale_days": 11,
+   "stale_days": 12,
    "history": 132
   },
   {
@@ -515,7 +515,7 @@
    "freq": "daily",
    "price": 24.6,
    "date": "2026-10-15",
-   "stale_days": 11,
+   "stale_days": 12,
    "history": 132
   },
   {
@@ -527,7 +527,7 @@
    "freq": "daily",
    "price": 157.31,
    "date": "2026-10-15",
-   "stale_days": 11,
+   "stale_days": 12,
    "history": 132
   },
   {
@@ -539,7 +539,7 @@
    "freq": "daily",
    "price": 47.95,
    "date": "2026-10-15",
-   "stale_days": 11,
+   "stale_days": 12,
    "history": 130
   },
   {
@@ -551,7 +551,7 @@
    "freq": "daily",
    "price": 771.79,
    "date": "2026-10-15",
-   "stale_days": 11,
+   "stale_days": 12,
    "history": 130
   },
   {
@@ -563,7 +563,7 @@
    "freq": "daily",
    "price": 47.76,
    "date": "2026-10-15",
-   "stale_days": 11,
+   "stale_days": 12,
    "history": 130
   },
   {
@@ -575,7 +575,7 @@
    "freq": "daily",
    "price": 66.02,
    "date": "2026-10-15",
-   "stale_days": 11,
+   "stale_days": 12,
    "history": 130
   },
   {
@@ -587,7 +587,7 @@
    "freq": "daily",
    "price": 95.43,
    "date": "2026-10-15",
-   "stale_days": 11,
+   "stale_days": 12,
    "history": 130
   },
   {
@@ -599,7 +599,7 @@
    "freq": "daily",
    "price": 156.22,
    "date": "2026-10-15",
-   "stale_days": 11,
+   "stale_days": 12,
    "history": 130
   },
   {
@@ -611,7 +611,7 @@
    "freq": "daily",
    "price": 51.69,
    "date": "2026-10-15",
-   "stale_days": 11,
+   "stale_days": 12,
    "history": 130
   },
   {
@@ -623,7 +623,7 @@
    "freq": "daily",
    "price": 41.58,
    "date": "2026-10-15",
-   "stale_days": 11,
+   "stale_days": 12,
    "history": 130
   },
   {
@@ -635,7 +635,7 @@
    "freq": "daily",
    "price": 2841,
    "date": "2026-08-21",
-   "stale_days": 66,
+   "stale_days": 67,
    "history": 1
   },
   {
@@ -647,7 +647,7 @@
    "freq": "weekly",
    "price": 4526,
    "date": "2026-08-20",
-   "stale_days": 67,
+   "stale_days": 68,
    "history": 1
   }
  ]
