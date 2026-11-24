@@ -57,7 +57,7 @@
    "unit": "USD",
    "source": "Coinbase",
    "freq": "daily",
-   "price": 61132.49,
+   "price": 59939.41,
    "date": "2026-11-24",
    "stale_days": 0,
    "history": 440
@@ -69,7 +69,7 @@
    "unit": "USD",
    "source": "Coinbase",
    "freq": "daily",
-   "price": 1702.56,
+   "price": 1684.32,
    "date": "2026-11-24",
    "stale_days": 0,
    "history": 440
@@ -81,7 +81,7 @@
    "unit": "USD",
    "source": "Coinbase",
    "freq": "daily",
-   "price": 72.11,
+   "price": 69.92,
    "date": "2026-11-24",
    "stale_days": 0,
    "history": 440
@@ -93,9 +93,9 @@
    "unit": "index",
    "source": "CBOE via FRED",
    "freq": "daily",
-   "price": 35.89,
-   "date": "2026-11-20",
-   "stale_days": 4,
+   "price": 26.62,
+   "date": "2026-11-23",
+   "stale_days": 1,
    "history": 900
   },
   {
@@ -106,8 +106,8 @@
    "source": "Treasury via FRED",
    "freq": "daily",
    "price": 4.92,
-   "date": "2026-11-20",
-   "stale_days": 4,
+   "date": "2026-11-23",
+   "stale_days": 1,
    "history": 900
   },
   {
